@@ -70,6 +70,8 @@
         deviceId: data.deviceId || "",
         input: data.input || [],
         output: data.output || [],
+        ChipModel: data.ChipModel || "",
+        EfuseMac: data.EfuseMac || "",
       };
       deviceSettings.wifi = [];
       if (data.wifi && Array.isArray(data.wifi)) {
