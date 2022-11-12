@@ -303,7 +303,7 @@
             min="1"
             step="1"
             max="255"
-            bind:value={deviceSettings.output[i].name}
+            bind:value={deviceSettings.output[i].gpio}
           />
         {/each}
       </div>
