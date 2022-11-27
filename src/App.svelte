@@ -30,7 +30,7 @@
 
   let ContactType = [
     { text: "NORMALLY_CLOSED", value: 1 },
-    { text: "NORMALLY_OPENED", vaue: 2 },
+    { text: "NORMALLY_OPENED", value: 2 },
   ];
 
   var link_osm = "";
@@ -355,7 +355,7 @@
         <label for="fname">Siren Type</label>
         {#each deviceSettings.i as { st }, i}
           <div>
-            <select bind:value={deviceSettings.i[i].type}>
+            <select bind:value={deviceSettings.i[i].siren_type}>
               {#each SirenType as itype}
                 <option value={itype.value}>
                   {itype.text}
