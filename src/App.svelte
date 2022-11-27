@@ -1,17 +1,55 @@
 <script>
   import { onMount } from "svelte/internal";
+  import GpioComponent from "./components/gpio.svelte";
+  import EnabledComponent from "./components/enable_button.svelte";
 
+  let InputType = [
+    { text: "NONE", value: 0 },
+    { text: "ALARM_MEDICAL", value: 100 },
+    { text: "ALARM_FIRE", value: 101 },
+    { text: "ALARM_PANIC", value: 102 },
+    { text: "ALARM_BURGLARY", value: 103 },
+    { text: "ALARM_GENERAL", value: 104 },
+    { text: "ALARM_24H", value: 105 },
+  ];
+
+  let SirenType = [
+    { text: "UNABLED", value: 0 },
+    { text: "SILENT", value: 1 },
+    { text: "CONTINUOUS", value: 2 },
+    { text: "PULSING", value: 3 },
+    { text: "TEST", vaue: 4 },
+  ];
+
+  let StatusZone = [
+    { text: "TROUBLE", value: 3 },
+    { text: "NORMAL", value: 1 },
+    { text: "ALARM", value: 2 },
+    { text: "UNDEFINED", value: 0 },
+  ];
+
+  let ContactType = [
+    { text: "NORMALLY_CLOSED", value: 1 },
+    { text: "NORMALLY_OPENED", vaue: 2 },
+  ];
+
+  var link_osm = "";
   var rebooting = false;
+
+  var statusInputs = [];
+
   var deviceSettings = {
     MAX_SSID_WIFI: 3,
-    websocketHost: "",
-    caCert_fingerPrint: "",
+    wsHost: "",
+    cfp: "",
+    acbgl: false,
     latitude: 0,
     longitude: 0,
     deviceId: "",
-    input: [],
-    output: [],
-    wifi: [
+    i: [],
+    o: [],
+    tg: [],
+    wf: [
       { ssid: "", pwd: "" },
       { ssid: "", pwd: "" },
       { ssid: "", pwd: "" },
@@ -53,48 +91,70 @@
   }
 
   async function getSettings() {
-    let response = await fetch("/getsettings");
-    let data = await response.json();
+    try {
+      let response = await fetch("/getsettings");
+      let data = await response.json();
 
-    console.log("Retorna settings", deviceSettings);
+      //    console.log("Retorna settings", deviceSettings);
 
-    if (data) {
-      //    MAX_SSID = data.MAX_SSID || 3;
+      if (data) {
+        deviceSettings = {
+          MAX_SSID_WIFI: data.MAX_SSID_WIFI || 3,
+          cfp: data.cfp || "",
+          acbgl: data.acbgl || false,
+          wsHost: data.wsHost || "",
+          latitude: data.latitude || 0,
+          longitude: data.longitude || 0,
+          deviceId: data.deviceId || "",
+          i: data.i || [],
+          o: data.o || [],
+          tg: data.tg || [],
+          wf: data.wf || [],
+          ChipModel: data.ChipModel || "",
+          EfuseMac: data.EfuseMac || "",
+        };
 
-      deviceSettings = {
-        MAX_SSID_WIFI: data.MAX_SSID_WIFI || 3,
-        caCert_fingerPrint: data.caCert_fingerPrint || "",
-        websocketHost: data.websocketHost || "",
-        latitude: data.latitude || 0,
-        longitude: data.longitude || 0,
-        deviceId: data.deviceId || "",
-        input: data.input || [],
-        output: data.output || [],
-        ChipModel: data.ChipModel || "",
-        EfuseMac: data.EfuseMac || "",
-      };
-      deviceSettings.wifi = [];
-      if (data.wifi && Array.isArray(data.wifi)) {
-        data.wifi.forEach((element) => {
-          deviceSettings.wifi.push({ ssid: element.ssid, pwd: element.pwd });
+        //        console.log("settings 1: ", deviceSettings);
+
+        deviceSettings.tg = deviceSettings.tg.map((tg) => {
+          return {
+            id: tg.id || "",
+            name: tg.name || "",
+            enabled: tg.enabled || false,
+          };
         });
+
+        console.log("settings 2: ", deviceSettings);
       }
+    } catch (error) {
+      console.trace(error);
+    }
+  }
 
-      // Esto es para completar la cantidad de SSIDs, por ejemplo si llegan solo 2 SSID se completa a MAX_SSID_WIFI para que se creen los casilleros en la página
-      let ssid_length = deviceSettings.MAX_SSID_WIFI + 1;
-      if (deviceSettings.wifi) {
-        ssid_length = deviceSettings.MAX_SSID_WIFI - deviceSettings.wifi.length;
+  async function getInputStatus() {
+    try {
+      let response = await fetch("/getinputsstatus");
+      let data = await response.json();
+
+      console.log("getInputStatus : ", data);
+
+      if (data && Array.isArray(data)) {
+        statusInputs = data;
+      } else {
+        statusInputs = [];
       }
+    } catch (error) {
+      console.trace(error);
+    }
+  }
 
-      console.log(deviceSettings, ssid_length);
-
-      let i = 0;
-      while (i < ssid_length) {
-        deviceSettings.wifi.push({ ssid: "", pwd: "" });
-        i++;
-      }
-
-      console.log("settings: ", deviceSettings);
+  function getGeoFromLink() {
+    try {
+      let params = new URL(link_osm).searchParams;
+      deviceSettings.latitude = params.get("mlat"); // is the string "Jonathan Smith".
+      deviceSettings.longitude = params.get("mlon"); // is the string "Jonathan Smith".
+    } catch (error) {
+      alert("El link ingresado no es válido");
     }
   }
 
@@ -115,14 +175,18 @@
     }
   }
 
-  onMount(async () => {});
+  onMount(() => {
+    setInterval(async () => {
+      await getInputStatus();
+    }, 1500);
+  });
 </script>
 
 <div class="bg">
   <h1 style="color: darkcyan;">OPEN COMMUNITY SAFETY</h1>
   <div class="button_ali">
     <button class="button button1" on:click={reboot} disabled={rebooting}
-      >Reboot Board</button
+      >Reboot Board.</button
     >
     <button class="button button1" on:click={getSettings} disabled={rebooting}
       >Get settings</button
@@ -159,11 +223,7 @@
 
     <div>
       <label for="fname">Websocket Host</label>
-      <input
-        type="text"
-        name="websockethost"
-        bind:value={deviceSettings.websocketHost}
-      />
+      <input type="text" name="wsHost" bind:value={deviceSettings.wsHost} />
     </div>
   </fieldset>
 
@@ -173,13 +233,25 @@
     <div class="flex-container">
       <div class="f5">
         <label for="fname">Latitude</label>
-        <input type="text" name="geox" bind:value={deviceSettings.latitude} />
+        <input type="text" bind:value={deviceSettings.latitude} />
       </div>
 
       <div class="f5">
         <label for="lname">Longitude</label>
-        <input type="text" name="geoy" bind:value={deviceSettings.longitude} />
+        <input type="text" bind:value={deviceSettings.longitude} />
       </div>
+    </div>
+
+    <div>
+      <label for="lname">From Open Street Maps Link</label>
+      <input type="text" bind:value={link_osm} on:change={getGeoFromLink} />
+    </div>
+
+    <div class="flex-container">
+      <div class="f0">
+        <EnabledComponent bind:enabled={deviceSettings.acbgl} />
+      </div>
+      <div class="f6">Allow device for community use by geolocation</div>
     </div>
 
     <div class="href_gelocation">
@@ -187,7 +259,7 @@
       <a
         target="_blank"
         href={`https://www.openstreetmap.org/?mlat=${deviceSettings.latitude}&mlon=${deviceSettings.longitude}#map=19/${deviceSettings.latitude}/${deviceSettings.longitude}`}
-        >Show map</a
+        >Show on Open Street Maps</a
       >
     </div>
   </fieldset>
@@ -198,23 +270,23 @@
     <div class="flex-container">
       <div class="f5">
         <label for="fname">SSID Name</label>
-        {#each deviceSettings.wifi as { wifi }, i}
+        {#each deviceSettings.wf as { wf }, i}
           <input
             type="text"
             maxlength="15"
             disabled={i == 0}
-            bind:value={deviceSettings.wifi[i].ssid}
+            bind:value={deviceSettings.wf[i].ssid}
           />
         {/each}
       </div>
 
       <div class="f5">
         <label for="lname">Password</label>
-        {#each deviceSettings.wifi as { wifi }, i}
+        {#each deviceSettings.wf as { wf }, i}
           <input
             type="password"
             disabled={i == 0}
-            bind:value={deviceSettings.wifi[i].pwd}
+            bind:value={deviceSettings.wf[i].pwd}
           />
         {/each}
       </div>
@@ -225,42 +297,92 @@
     <legend class="legent">Inputs</legend>
 
     <div class="flex-container">
-      <div class="f1">
+      <div class="f0">
         <label for="lname">Enabled</label>
-        {#each deviceSettings.input as { input }, i}
-          <span class="sliderb">
-            <label class="switch">
-              <input
-                type="checkbox"
-                bind:checked={deviceSettings.input[i].enabled}
-              />
-              <span class="slider" />
-            </label></span
-          >
+        {#each deviceSettings.i as { input }, i}
+          <EnabledComponent bind:enabled={deviceSettings.i[i].enabled} />
         {/each}
       </div>
 
-      <div class="f6">
+      <div class="f4">
         <label for="lname">Label</label>
-        {#each deviceSettings.input as { input }, i}
+        {#each deviceSettings.i as { input }, i}
           <input
             type="text"
             maxlength="15"
-            bind:value={deviceSettings.input[i].name}
+            bind:value={deviceSettings.i[i].name}
           />
         {/each}
       </div>
 
-      <div class="f3">
-        <label for="fname">GPIO Input</label>
-        {#each deviceSettings.input as { input }, i}
-          <input
-            type="number"
-            min="1"
-            step="1"
-            max="255"
-            bind:value={deviceSettings.input[i].gpio}
-          />
+      <div class="f1">
+        <label for="fname">GPIO</label>
+        {#each deviceSettings.i as { input }, i}
+          <GpioComponent bind:gpio={deviceSettings.i[i].gpio} />
+        {/each}
+      </div>
+      <div class="f2">
+        <label for="fname">Input Type</label>
+        {#each deviceSettings.i as { input }, i}
+          <div>
+            <select bind:value={deviceSettings.i[i].type}>
+              {#each InputType as itype}
+                <option value={itype.value}>
+                  {itype.text}
+                </option>
+              {/each}
+            </select>
+          </div>
+        {/each}
+      </div>
+
+      <div class="f2">
+        <label for="fname">Contact Type</label>
+        {#each deviceSettings.i as { ct }, i}
+          <div>
+            <select bind:value={deviceSettings.i[i].type}>
+              {#each ContactType as itype}
+                <option value={itype.value}>
+                  {itype.text}
+                </option>
+              {/each}
+            </select>
+          </div>
+        {/each}
+      </div>
+
+      <div class="f2">
+        <label for="fname">Siren Type</label>
+        {#each deviceSettings.i as { st }, i}
+          <div>
+            <select bind:value={deviceSettings.i[i].type}>
+              {#each SirenType as itype}
+                <option value={itype.value}>
+                  {itype.text}
+                </option>
+              {/each}
+            </select>
+          </div>
+        {/each}
+      </div>
+      <div class="f2">
+        <label for="fname">Status Zone</label>
+        {#each statusInputs as { st }, i}
+          <div>
+            <select disabled bind:value={statusInputs[i].status}>
+              {#each StatusZone as itype}
+                <option value={itype.value}>
+                  {itype.text}
+                </option>
+              {/each}
+            </select>
+          </div>
+        {/each}
+      </div>
+      <div class="f1">
+        <label for="lname">Value</label>
+        {#each statusInputs as { v }, i}
+          <input type="text" disabled bind:value={statusInputs[i].value} />
         {/each}
       </div>
     </div>
@@ -270,40 +392,60 @@
     <legend class="legent">Outputs</legend>
 
     <div class="flex-container">
-      <div class="f1">
+      <div class="f0">
         <label for="lname">Enabled</label>
-        {#each deviceSettings.output as { wifi }, i}
-          <span class="sliderb">
-            <label class="switch">
-              <input
-                type="checkbox"
-                bind:checked={deviceSettings.output[i].enabled}
-              />
-              <span class="slider" />
-            </label></span
-          >
+        {#each deviceSettings.o as { o }, i}
+          <EnabledComponent bind:enabled={deviceSettings.o[i].enabled} />
         {/each}
       </div>
 
       <div class="f6">
         <label for="lname">Label</label>
-        {#each deviceSettings.output as { output }, i}
+        {#each deviceSettings.o as { o }, i}
           <input
             type="text"
             maxlength="15"
-            bind:value={deviceSettings.output[i].name}
+            bind:value={deviceSettings.o[i].name}
           />
         {/each}
       </div>
       <div class="f3">
-        <label for="fname">GPIO Output</label>
-        {#each deviceSettings.output as { output }, i}
+        <label for="fname">GPIO</label>
+        {#each deviceSettings.o as { o }, i}
+          <GpioComponent bind:gpio={deviceSettings.o[i].gpio} />
+        {/each}
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="fset">
+    <legend class="legent">Telegram Group</legend>
+
+    <div class="flex-container">
+      <div class="f0">
+        <label for="lname">Enabled</label>
+        {#each deviceSettings.tg as { o }, i}
+          <EnabledComponent bind:enabled={deviceSettings.tg[i].enabled} />
+        {/each}
+      </div>
+
+      <div class="f6">
+        <label for="lname">Name</label>
+        {#each deviceSettings.tg as { o }, i}
           <input
-            type="number"
-            min="1"
-            step="1"
-            max="255"
-            bind:value={deviceSettings.output[i].gpio}
+            type="text"
+            maxlength="15"
+            bind:value={deviceSettings.tg[i].name}
+          />
+        {/each}
+      </div>
+      <div class="f3">
+        <label for="fname">Id</label>
+        {#each deviceSettings.tg as { o }, i}
+          <input
+            type="text"
+            maxlength="50"
+            bind:value={deviceSettings.tg[i].id}
           />
         {/each}
       </div>
@@ -312,12 +454,7 @@
 
   <fieldset class="fset">
     <legend class="legent">SSL Certificate</legend>
-    <textarea
-      class="ca"
-      rows="25"
-      cols="50"
-      bind:value={deviceSettings.caCert_fingerPrint}
-    />
+    <textarea class="ca" rows="25" cols="50" bind:value={deviceSettings.cfp} />
   </fieldset>
 </div>
 
@@ -346,24 +483,21 @@
   input {
     width: 100%;
     padding: 12px 20px;
-    margin: 8px 0;
+    margin: 4px 0;
     box-sizing: border-box;
     border: none;
     background-color: #2b349f;
     color: white;
   }
 
-  /*
   select {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 7px 0;
-    box-sizing: border-box;
-    border: none;
     background-color: #2b349f;
     color: white;
+    margin: 4px 0;
+    height: 40px;
+    width: 100%;
   }
-*/
+
   .button {
     border: none;
     color: white;
@@ -395,78 +529,32 @@
   .legent {
     font-size: 1.5em;
   }
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 65px;
-    height: 39px;
-    margin: 8px;
-  }
 
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-  }
-
-  .slider:before {
-    position: absolute;
-    content: "";
-    height: 30px;
-    width: 30px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    -webkit-transition: 0.4s;
-    transition: 0.4s;
-  }
-
-  input:checked + .slider {
-    background-color: #2196f3;
-  }
-
-  input:focus + .slider {
-    box-shadow: 0 0 1px #2196f3;
-  }
-
-  input:checked + .slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
-  }
-  .sliderb {
-    width: 100%;
-    box-sizing: border-box;
-    border: none;
-    display: block;
-  }
-
-  .f5 {
-    flex-grow: 5;
-    margin: 10px;
+  .f0 {
+    margin: 5px;
   }
   .f1 {
     flex-grow: 1;
-    margin: 10px;
+    margin: 5px;
   }
-  .f6 {
-    flex-grow: 1;
-    margin: 10px;
+  .f2 {
+    flex-grow: 2;
+    margin: 5px;
   }
   .f3 {
-    flex-grow: 1;
-    margin: 10px;
+    flex-grow: 3;
+    margin: 5px;
+  }
+  .f4 {
+    flex-grow: 4;
+    margin: 5px;
+  }
+  .f5 {
+    flex-grow: 5;
+    margin: 5px;
+  }
+  .f6 {
+    flex-grow: 6;
+    margin: 5px;
   }
 </style>
