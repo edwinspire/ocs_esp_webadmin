@@ -48,7 +48,7 @@
     deviceId: "",
     i: [],
     o: [],
-    tg: [],
+    //    tg: [],
     wf: [
       { ssid: "", pwd: "" },
       { ssid: "", pwd: "" },
@@ -417,7 +417,7 @@
       </div>
     </div>
   </fieldset>
-
+<!-- 
   <fieldset class="fset">
     <legend class="legent">Telegram Group</legend>
 
@@ -451,7 +451,7 @@
       </div>
     </div>
   </fieldset>
-
+ -->
   <fieldset class="fset">
     <legend class="legent">SSL Certificate</legend>
     <textarea class="ca" rows="25" cols="50" bind:value={deviceSettings.cfp} />
