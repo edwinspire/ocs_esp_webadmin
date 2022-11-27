@@ -340,7 +340,7 @@
         <label for="fname">Contact Type</label>
         {#each deviceSettings.i as { ct }, i}
           <div>
-            <select bind:value={deviceSettings.i[i].type}>
+            <select bind:value={deviceSettings.i[i].contact_type}>
               {#each ContactType as itype}
                 <option value={itype.value}>
                   {itype.text}
