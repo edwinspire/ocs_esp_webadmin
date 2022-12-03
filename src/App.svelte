@@ -106,6 +106,7 @@
           latitude: data.latitude || 0,
           longitude: data.longitude || 0,
           deviceId: data.deviceId || "",
+          name: data.name || "",
           i: data.i || [],
           o: data.o || [],
           tg: data.tg || [],
@@ -183,7 +184,7 @@
 </script>
 
 <div class="bg">
-  <h1 style="color: darkcyan;">OPEN COMMUNITY SAFETY</h1>
+  <h1 style="color:darkblue;">OPEN COMMUNITY SAFETY</h1>
   <div class="button_ali">
     <button class="button button1" on:click={reboot} disabled={rebooting}
       >Reboot Board.</button
@@ -212,11 +213,21 @@
     </div>
 
     <div>
+      <label for="fname">Name</label>
+      <input
+        type="text"
+        name="deviceId"
+        maxlength="30"
+        bind:value={deviceSettings.name}
+      />
+    </div>
+
+    <div>
       <label for="fname">Device ID</label>
       <input
         type="text"
         name="deviceId"
-        maxlength="40"
+        maxlength="50"
         bind:value={deviceSettings.deviceId}
       />
     </div>
@@ -417,7 +428,7 @@
       </div>
     </div>
   </fieldset>
-<!-- 
+  <!-- 
   <fieldset class="fset">
     <legend class="legent">Telegram Group</legend>
 
