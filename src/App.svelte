@@ -107,6 +107,7 @@
           longitude: data.longitude || 0,
           deviceId: data.deviceId || "",
           name: data.name || "",
+          led: data.led || 255,
           i: data.i || [],
           o: data.o || [],
           tg: data.tg || [],
@@ -401,6 +402,14 @@
 
   <fieldset class="fset">
     <legend class="legent">Outputs</legend>
+
+    <div class="flex-container">
+      <div class="f0">
+        <label for="lname">Led GPIO</label>
+
+        <GpioComponent bind:gpio={deviceSettings.led} />
+      </div>
+    </div>
 
     <div class="flex-container">
       <div class="f0">
