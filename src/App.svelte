@@ -138,6 +138,7 @@
   }
 
   function setValues(data) {
+    console.log(data);
     if (data) {
       deviceSettings = {
         MAX_SSID_WIFI: data.MAX_SSID_WIFI || 3,
@@ -185,13 +186,20 @@
     }
 
     const reader = new FileReader();
+
+   
+
     reader.addEventListener("load", (event) => {
       //img.src = event.target.result;
-      console.log(event.target.result);
+      console.log(event.target);
 
-      setValues(event.target.result);
+      try {
+        setValues(JSON.parse(event.target.result));
+      } catch (error) {
+        alert(error.message);
+      }
     });
-    reader.readAsDataURL(file);
+    reader.readAsText(file);
   }
 
   function getGeoFromLink() {
