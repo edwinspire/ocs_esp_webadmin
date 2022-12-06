@@ -42,6 +42,7 @@
     MAX_SSID_WIFI: 3,
     wsHost: "",
     cfp: "",
+    name: "Unknow",
     acbgl: false,
     latitude: 0,
     longitude: 0,
@@ -96,7 +97,8 @@
       let data = await response.json();
 
       //    console.log("Retorna settings", deviceSettings);
-
+      setValues(data);
+      /*
       if (data) {
         deviceSettings = {
           MAX_SSID_WIFI: data.MAX_SSID_WIFI || 3,
@@ -110,11 +112,12 @@
           led: data.led || 255,
           i: data.i || [],
           o: data.o || [],
-          tg: data.tg || [],
+          //tg: data.tg || [],
           wf: data.wf || [],
           ChipModel: data.ChipModel || "",
           EfuseMac: data.EfuseMac || "",
         };
+        
 
         //        console.log("settings 1: ", deviceSettings);
 
@@ -128,8 +131,31 @@
 
         console.log("settings 2: ", deviceSettings);
       }
+      */
     } catch (error) {
       console.trace(error);
+    }
+  }
+
+  function setValues(data) {
+    if (data) {
+      deviceSettings = {
+        MAX_SSID_WIFI: data.MAX_SSID_WIFI || 3,
+        cfp: data.cfp || "",
+        acbgl: data.acbgl || false,
+        wsHost: data.wsHost || "",
+        latitude: data.latitude || 0,
+        longitude: data.longitude || 0,
+        deviceId: data.deviceId || "",
+        name: data.name || "",
+        led: data.led || 255,
+        i: data.i || [],
+        o: data.o || [],
+        //tg: data.tg || [],
+        wf: data.wf || [],
+        ChipModel: data.ChipModel || "",
+        EfuseMac: data.EfuseMac || "",
+      };
     }
   }
 
@@ -148,6 +174,24 @@
     } catch (error) {
       console.trace(error);
     }
+  }
+
+  function readFile(file) {
+    // Check if the file is an image.
+    console.log(file);
+    if (file.type && !file.type.startsWith("application/json")) {
+      console.log("File is not json.", file.type, file);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
+      //img.src = event.target.result;
+      console.log(event.target.result);
+
+      setValues(event.target.result);
+    });
+    reader.readAsDataURL(file);
   }
 
   function getGeoFromLink() {
@@ -475,6 +519,48 @@
   <fieldset class="fset">
     <legend class="legent">SSL Certificate</legend>
     <textarea class="ca" rows="25" cols="50" bind:value={deviceSettings.cfp} />
+  </fieldset>
+  <fieldset class="fset">
+    <legend class="legent">Config File</legend>
+
+    <div class="flex-container">
+      <div class="f5">
+        <label for="fname">Load from file</label>
+        <input
+          type="file"
+          accept=".json"
+          on:change={(event) => {
+            const fileList = event.target.files;
+            console.log(fileList);
+
+            readFile(fileList[0]);
+          }}
+        />
+      </div>
+      <div class="f5">
+        <label for="fname">Download file</label>
+        <input
+          type="button"
+          accept=".json"
+          value="Download"
+          on:click={(event) => {
+            let name_file =
+              deviceSettings.name || deviceSettings.deviceId || "unknow";
+            let url = window.URL.createObjectURL(
+              new Blob([JSON.stringify(deviceSettings, null, 2)], {
+                type: "application/json",
+              })
+            );
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = name_file + ".json";
+            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+            a.click();
+            a.remove(); //afterwards we remove the element again
+          }}
+        />
+      </div>
+    </div>
   </fieldset>
 </div>
 
