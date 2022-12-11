@@ -36,7 +36,7 @@
   var link_osm = "";
   var rebooting = false;
 
-  var statusInputs = [];
+  var statusInputs = [{ value: 1200 }, { value: 2048 }];
 
   var deviceSettings = {
     MAX_SSID_WIFI: 3,
@@ -187,8 +187,6 @@
 
     const reader = new FileReader();
 
-   
-
     reader.addEventListener("load", (event) => {
       //img.src = event.target.result;
       console.log(event.target);
@@ -248,6 +246,36 @@
     <button class="button button1" on:click={setSettings} disabled={rebooting}
       >Save settings</button
     >
+    <input
+      class="button button1 bsavesettings"
+      type="file"
+      accept=".json"
+      on:change={(event) => {
+        const fileList = event.target.files;
+        console.log(fileList);
+
+        readFile(fileList[0]);
+      }}
+    />
+    <button
+      class="button button1"
+      on:click={(event) => {
+        let name_file =
+          deviceSettings.ChipModel +
+          (deviceSettings.name || deviceSettings.deviceId || "unknow");
+        let url = window.URL.createObjectURL(
+          new Blob([JSON.stringify(deviceSettings, null, 2)], {
+            type: "application/json",
+          })
+        );
+        var a = document.createElement("a");
+        a.href = url;
+        a.download = name_file + ".json";
+        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+        a.click();
+        a.remove(); //afterwards we remove the element again
+      }}>Download Config</button
+    >
   </div>
 
   <fieldset class="fset">
@@ -280,7 +308,7 @@
       <input
         type="text"
         name="deviceId"
-        maxlength="50"
+        maxlength="200"
         bind:value={deviceSettings.deviceId}
       />
     </div>
@@ -444,9 +472,13 @@
         {/each}
       </div>
       <div class="f1">
-        <label for="lname">Value</label>
+        <label for="fname" style="color: white;">.</label>
         {#each statusInputs as { v }, i}
-          <input type="text" disabled bind:value={statusInputs[i].value} />
+          <div class="progress_bar">
+            <div>Value: {statusInputs[i].value}</div>
+
+            <progress value={statusInputs[i].value} max="4095" />
+          </div>
         {/each}
       </div>
     </div>
@@ -489,86 +521,16 @@
       </div>
     </div>
   </fieldset>
-  <!-- 
-  <fieldset class="fset">
-    <legend class="legent">Telegram Group</legend>
 
-    <div class="flex-container">
-      <div class="f0">
-        <label for="lname">Enabled</label>
-        {#each deviceSettings.tg as { o }, i}
-          <EnabledComponent bind:enabled={deviceSettings.tg[i].enabled} />
-        {/each}
-      </div>
-
-      <div class="f6">
-        <label for="lname">Name</label>
-        {#each deviceSettings.tg as { o }, i}
-          <input
-            type="text"
-            maxlength="15"
-            bind:value={deviceSettings.tg[i].name}
-          />
-        {/each}
-      </div>
-      <div class="f3">
-        <label for="fname">Id</label>
-        {#each deviceSettings.tg as { o }, i}
-          <input
-            type="text"
-            maxlength="50"
-            bind:value={deviceSettings.tg[i].id}
-          />
-        {/each}
-      </div>
-    </div>
-  </fieldset>
- -->
   <fieldset class="fset">
     <legend class="legent">SSL Certificate</legend>
-    <textarea class="ca" rows="25" cols="50" bind:value={deviceSettings.cfp} />
-  </fieldset>
-  <fieldset class="fset">
-    <legend class="legent">Config File</legend>
-
-    <div class="flex-container">
-      <div class="f5">
-        <label for="fname">Load from file</label>
-        <input
-          type="file"
-          accept=".json"
-          on:change={(event) => {
-            const fileList = event.target.files;
-            console.log(fileList);
-
-            readFile(fileList[0]);
-          }}
-        />
-      </div>
-      <div class="f5">
-        <label for="fname">Download file</label>
-        <input
-          type="button"
-          accept=".json"
-          value="Download"
-          on:click={(event) => {
-            let name_file =
-              deviceSettings.name || deviceSettings.deviceId || "unknow";
-            let url = window.URL.createObjectURL(
-              new Blob([JSON.stringify(deviceSettings, null, 2)], {
-                type: "application/json",
-              })
-            );
-            var a = document.createElement("a");
-            a.href = url;
-            a.download = name_file + ".json";
-            document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
-            a.click();
-            a.remove(); //afterwards we remove the element again
-          }}
-        />
-      </div>
-    </div>
+    <textarea
+      class="ca"
+      rows="25"
+      cols="50"
+      maxlength="2000"
+      bind:value={deviceSettings.cfp}
+    />
   </fieldset>
 </div>
 
@@ -602,6 +564,10 @@
     border: none;
     background-color: #2b349f;
     color: white;
+  }
+
+  progress {
+    width: 100%;
   }
 
   select {
@@ -640,6 +606,11 @@
     text-align: end;
   }
 
+  .bsavesettings {
+    width: auto;
+    padding: 13px;
+  }
+
   .legent {
     font-size: 1.5em;
   }
@@ -670,5 +641,9 @@
   .f6 {
     flex-grow: 6;
     margin: 5px;
+  }
+
+  .progress_bar {
+    height: 52px;
   }
 </style>
