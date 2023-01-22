@@ -44,14 +44,17 @@ const httpServer = createServer(app);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, '../', 'build')));
+
 app.get('/device/getsettings', (req, res) => {
 	res.status(200).json(data);
 });
 
+/////////////////////////////////////////////////
 app.get('/device/reboot', (req, res) => {
 	res.status(200).json({});
 });
 
+///////////////////////////////////////////////////
 app.get('/device/inputs/status', (req, res) => {
 	let i = data.i.map((inp) => {
 		return {

@@ -18,8 +18,8 @@
 			let response = await fetch('/device/inputs');
 			let data = await response.json();
 
-			if (response.status == 200 && data) {
-				inputs = data;
+			if (response.status == 200 && data && data.i && Array.isArray(data.i)) {
+				inputs = data.i;
 			}
 		} catch (error) {
 			console.trace(error);

@@ -12,8 +12,8 @@
 			let response = await fetch('/device/wifi');
 			let data = await response.json();
 
-			if (response.status == 200 && data) {
-				wf = data;
+			if (response.status == 200 && data && data.wf && Array.isArray(data.wf)) {
+				wf = data.wf;
 			}
 		} catch (error) {
 			console.trace(error);
