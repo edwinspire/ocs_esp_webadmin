@@ -1,12 +1,15 @@
 <script>
 	// @ts-nocheck
-	import { onMount } from 'svelte/internal';
-	import Menu from '$lib/components/menu.svelte';
 	import DeviceField from '$lib/components/device_fieldset.svelte';
 	import Geolocationfield from '$lib/components/geolocation_fieldset.svelte';
 	import WifiField from '$lib/components/wifi_fieldset.svelte';
 	import InputsFieldset from '$lib/components/inputs_fieldset.svelte';
 	import OutputsFieldset from '$lib/components/outputs_fieldset.svelte';
+	import Menu from '$lib/components/menu.svelte';
+	import { createEventDispatcher } from 'svelte';
+	import { dispatch_events } from '$lib/class/utils.js';
+
+	const dispatch = createEventDispatcher();
 
 	var rebooting = false;
 	let DeviceFieldFun;
@@ -44,7 +47,7 @@
 		reader.readAsText(file);
 	}
 
-	function download() {
+	export const download = () => {
 		let name_file =
 			// @ts-ignore
 			deviceSettings.ChipModel + (deviceSettings.name || deviceSettings.deviceId || 'unknow');
@@ -59,9 +62,9 @@
 		document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
 		a.click();
 		a.remove(); //afterwards we remove the element again
-	}
+	};
 
-	function setSettings() {
+	export const save = () => {
 		if (confirm('Save?')) {
 			const promise1 = DeviceFieldFun.save();
 			const promise2 = GeolocationfieldFun.save();
@@ -82,43 +85,43 @@
 				}
 			});
 		}
-	}
+	};
 
-	onMount(async () => {});
+	export const getInfo = () => {
+		DeviceFieldFun.getInfo();
+		GeolocationfieldFun.getInfo();
+		WifiFieldFun.getInfo();
+		InputsFieldsetFun.getInfo();
+		OutputsFieldsetFun.getInfo();
+	};
 </script>
 
 <Menu
-	show_get={true}
-	show_save={true}
-	show_reboot={true}
+	isLogin={false}
 	show_download={true}
-	on:event={async (e) => {
-		//console.log(e.detail.name);
-
-		try {
-			switch (e.detail.name) {
-				case 'download':
-					console.log(e.detail.name);
-					download();
-					break;
+	show_get={true}
+	show_reboot={true}
+	show_save={true}
+	on:event={(e) => {
+		if (e.detail.name == 'action') {
+			switch (e.detail.value) {
 				case 'get':
-					console.log(e.detail.name);
-					DeviceFieldFun.getInfo();
-					GeolocationfieldFun.getInfo();
-					WifiFieldFun.getInfo();
-					InputsFieldsetFun.getInfo();
-					OutputsFieldsetFun.getInfo();
+					//console.log(InputsFieldsetFun, OutputsFieldsetFun);
+					getInfo();
 					break;
 				case 'save':
-					console.log(e.detail.name);
-					setSettings();
+					save();
+					break;
+				case 'download':
+					download();
 					break;
 			}
-		} catch (error) {
-			console.log(error);
+		} else {
+			dispatch_events(dispatch, e.detail.name, e.detail.value);
 		}
 	}}
 />
+
 <div class="bg">
 	<DeviceField
 		bind:name={deviceSettings.name}
@@ -155,7 +158,7 @@
 				}}
 			/>
 		</div>
-		<button class="button button1" on:click={setSettings} disabled={rebooting}>Save</button>
+		<button class="button button1" on:click={save} disabled={rebooting}>Save</button>
 	</fieldset>
 </div>
 

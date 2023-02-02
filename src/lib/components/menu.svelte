@@ -1,16 +1,15 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
+	import { dispatch_events } from '$lib/class/utils.js';
+
 	export let show_download = false;
 	export let show_reboot = false;
 	export let show_get = false;
 	export let show_save = false;
 	let rebooting = false;
+	export let isLogin = false;
 
 	const dispatch = createEventDispatcher();
-
-	function click_download() {
-		dispatch_events('download');
-	}
 
 	async function click_reboot() {
 		if (confirm('Desea reiniciar la placa?')) {
@@ -28,69 +27,96 @@
 			}
 		}
 	}
-
-	function click_get() {
-		dispatch_events('get');
-	}
-
-	function click_save() {
-		dispatch_events('save');
-	}
-
-	/**
-	 * @param {string} event
-	 */
-	function dispatch_events(event) {
-		dispatch('event', {
-			name: event
-		});
-	}
 </script>
 
 <div class="topnav">
-	<div class="tit">OPEN COMMUNITY SAFETY</div>
-	<!-- svelte-ignore a11y-invalid-attribute -->
-	<a href="/">Status</a>
-	<!-- svelte-ignore a11y-invalid-attribute -->
-	<a href="/setup">Setup</a>
-	<!-- svelte-ignore a11y-invalid-attribute -->
-	<a href="/ssl_cert">Certificate</a>
-
-	{#if show_download}
+	{#if isLogin}
 		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a href="#" style="float:right" on:click={click_download}>Download</a>
-	{/if}
+		<a
+			href="#"
+			style="float:right"
+			on:click={() => {
+				dispatch_events(dispatch, 'page', 'status');
+			}}>Login</a
+		>
+	{:else}
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<a
+			href="#"
+			on:click={() => {
+				dispatch_events(dispatch, 'page', 'status');
+			}}>Status</a
+		>
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<a
+			href="#"
+			on:click={() => {
+				dispatch_events(dispatch, 'page', 'setup');
+			}}>Setup</a
+		>
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<a
+			href="#"
+			on:click={() => {
+				dispatch_events(dispatch, 'page', 'cert');
+			}}>Certificate</a
+		>
 
-	{#if show_reboot}
-		{#if rebooting}
+		<!-- svelte-ignore a11y-invalid-attribute -->
+		<a
+			href="#"
+			style="float:right"
+			on:click={() => {
+				dispatch_events(dispatch, 'page', 'login');
+			}}>Exit</a
+		>
+
+		{#if show_download}
 			<!-- svelte-ignore a11y-invalid-attribute -->
-			<a href="#" style="float:right">Rebooting...</a>
-		{:else}
-			<!-- svelte-ignore a11y-invalid-attribute -->
-			<a href="#" style="float:right" on:click={click_reboot}>Reboot</a>
+			<a
+				href="#"
+				style="float:right"
+				on:click={() => {
+					dispatch_events(dispatch, 'action', 'download');
+				}}>Download</a
+			>
 		{/if}
-	{/if}
 
-	{#if show_save}
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a href="#" style="float:right" on:click={click_save}>Save</a>
-	{/if}
+		{#if show_reboot}
+			{#if rebooting}
+				<!-- svelte-ignore a11y-invalid-attribute -->
+				<a href="#" style="float:right">Rebooting...</a>
+			{:else}
+				<!-- svelte-ignore a11y-invalid-attribute -->
+				<a href="#" style="float:right" on:click={click_reboot}>Reboot</a>
+			{/if}
+		{/if}
 
-	{#if show_get}
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a href="#" style="float:right" on:click={click_get}>Get</a>
+		{#if show_save}
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			<a
+				href="#"
+				style="float:right"
+				on:click={() => {
+					dispatch_events(dispatch, 'action', 'save');
+				}}>Save</a
+			>
+		{/if}
+
+		{#if show_get}
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			<a
+				href="#"
+				style="float:right"
+				on:click={() => {
+					dispatch_events(dispatch, 'action', 'get');
+				}}>Get</a
+			>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	.tit {
-		color: ghostwhite;
-		text-align: -webkit-center;
-		padding: 5px;
-		font-size: large;
-		font-weight: bold;
-	}
-
 	/* Style the top navigation bar */
 	.topnav {
 		overflow: hidden;

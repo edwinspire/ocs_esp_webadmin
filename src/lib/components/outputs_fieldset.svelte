@@ -67,8 +67,11 @@
 				}
 
 				data.o.forEach((/** @type {{ gpio: any; status: any; }} */ item) => {
+					// @ts-ignore
 					outputs = outputs.map((m) => {
+						// @ts-ignore
 						let m1 = { ...m };
+						// @ts-ignore
 						if (item.gpio == m.gpio) {
 							m1.status = item.status;
 						}

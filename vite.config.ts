@@ -9,7 +9,8 @@ const config: UserConfig = {
 	plugins: [
 		sveltekit()
 		//	viteSingleFile({ removeViteModuleLoader: false })
-	]
+	],
+	
 };
 
 export default config;

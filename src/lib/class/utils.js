@@ -26,3 +26,16 @@ export function GetDeviceID(deviceId) {
 	console.log('GetDeviceID return', realDeviceId);
 	return realDeviceId;
 }
+
+/**
+ * @param {any} dispatch
+ * @param {string} event_name
+ * @param {string} value
+ */
+export function dispatch_events(dispatch, event_name, value) {
+	console.log(event_name);
+	dispatch('event', {
+		name: event_name,
+		value: value
+	});
+}
