@@ -1,4 +1,5 @@
 <script>
+	import { onMount } from 'svelte';
 	import Menu from '$lib/components/menu.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { dispatch_events } from '$lib/class/utils.js';
@@ -10,116 +11,126 @@
 	let pwd = '';
 
 	const dispatch = createEventDispatcher();
+
+	onMount(() => {});
 </script>
 
-<Menu
-	isLogin={true}
-	show_download={false}
-	show_get={false}
-	show_reboot={false}
-	show_save={false}
-	on:event={(e) => {
-		if (e.detail.name == 'page' && e.detail.value == 'status') {
-			if (user == iuser && pwd == ipwd) {
-				dispatch_events(dispatch, e.detail.name, e.detail.value);
-			} else {
-				alert('Invalid credentials');
-			}
-		}
-	}}
-/>
+<div class="modal">
+	<form class="modal-content animate" action="#" method="post">
+		<div class="container">
+			<label for="uname"><b>Username</b></label>
+			<input type="text" placeholder="Enter Username" required bind:value={user} />
 
-<div class="container">
-	<div class="row">
-		<div class="col-lg-3 col-md-2" />
-		<div class="col-lg-6 col-md-8 login-box">
-			<div class="col-lg-12 login-form">
-				<div class="col-lg-12 login-form">
-					<form>
-						<div class="form-group">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="form-control-label">USERNAME</label>
-							<input type="text" class="form-control" bind:value={user} />
-						</div>
-						<div class="form-group">
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="form-control-label">PASSWORD</label>
-							<input type="password" class="form-control" bind:value={pwd} />
-						</div>
-					</form>
-				</div>
-			</div>
-			<div class="col-lg-3 col-md-2" />
+			<label for="psw"><b>Password</b></label>
+			<input type="password" placeholder="Enter Password" required bind:value={pwd} />
 		</div>
-	</div>
+
+		<div class="container" style="background-color:#f1f1f1">
+			<button
+				type="button"
+				class="loginbtn"
+				on:click={(e) => {
+					if (user == iuser && pwd == ipwd) {
+						dispatch_events(dispatch, 'page', 'status');
+					} else {
+						alert('Invalid credentials');
+					}
+				}}>Login</button
+			>
+			<button type="button" class="exitbtn">Cancel</button>
+		</div>
+	</form>
 </div>
 
 <style>
-	.login-box {
-		height: auto;
-		background: #333;
-		text-align: center;
-		box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-	}
-
-	.login-form {
-		text-align: left;
-	}
-
-	input[type='text'] {
-		background-color: #1a2226;
-		border: none;
-		border-bottom: 2px solid #0db8de;
-		border-top: 0px;
-		border-radius: 0px;
-		font-weight: bold;
-		outline: 0;
-		margin-bottom: 20px;
-		padding-left: 0px;
-		color: #ecf0f5;
-	}
-
+	/* Full-width input fields */
+	input[type='text'],
 	input[type='password'] {
-		background-color: #1a2226;
+		width: 100%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		display: inline-block;
+		border: 1px solid #ccc;
+		box-sizing: border-box;
+	}
+
+	/* Set a style for all buttons */
+	button {
+		background-color: #04aa6d;
+		color: white;
+		padding: 14px 20px;
+		margin: 8px 0;
 		border: none;
-		border-bottom: 2px solid #0db8de;
-		border-top: 0px;
-		border-radius: 0px;
-		font-weight: bold;
-		outline: 0;
-		padding-left: 0px;
-		margin-bottom: 20px;
-		color: #ecf0f5;
+		cursor: pointer;
+		width: 100%;
 	}
 
-	.form-group {
-		margin-bottom: 40px;
-		outline: 0px;
+	button:hover {
+		opacity: 0.8;
 	}
 
-	.form-control:focus {
-		border-color: inherit;
-		-webkit-box-shadow: none;
-		box-shadow: none;
-		border-bottom: 2px solid #0db8de;
-		outline: 0;
-		background-color: #1a2226;
-		color: #ecf0f5;
+	/* Extra styles for the cancel button */
+	.loginbtn {
+		width: auto;
+		padding: 10px 18px;
+		background-color: #333;
 	}
 
-	input:focus {
-		outline: none;
-		box-shadow: 0 0 0;
+	.container {
+		padding: 16px;
 	}
 
-	label {
-		margin-bottom: 0px;
+	.exitbtn {
+		float: right;
+		width: auto;
+		padding: 10px 18px;
+		background-color: #f44336;
 	}
 
-	.form-control-label {
-		font-size: 10px;
-		color: #6c6c6c;
-		font-weight: bold;
-		letter-spacing: 1px;
+	/* The Modal (background) */
+	.modal {
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0, 0, 0); /* Fallback color */
+		background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+		padding-top: 60px;
 	}
+
+	/* Modal Content/Box */
+	.modal-content {
+		background-color: #fefefe;
+		margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+		border: 1px solid #888;
+		width: 80%; /* Could be more or less, depending on screen size */
+	}
+
+	/* Add Zoom Animation */
+	.animate {
+		-webkit-animation: animatezoom 0.6s;
+		animation: animatezoom 0.6s;
+	}
+
+	@-webkit-keyframes animatezoom {
+		from {
+			-webkit-transform: scale(0);
+		}
+		to {
+			-webkit-transform: scale(1);
+		}
+	}
+
+	@keyframes animatezoom {
+		from {
+			transform: scale(0);
+		}
+		to {
+			transform: scale(1);
+		}
+	}
+
 </style>
