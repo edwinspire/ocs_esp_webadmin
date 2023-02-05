@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte/internal';
-
+	import { certSave, certGet } from '$lib/class/utils.js';
 	/**
 	 * @type {any}
 	 */
@@ -8,33 +8,23 @@
 	export const save = async () => {
 		if (confirm('Desea guardar los cambios?')) {
 			try {
-				let response = await fetch('/device/cert', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({ cfp: cert })
-				});
-				let data = await response.json();
-				console.log(data);
-				if (response.status == 200 && data) {
+				let r = await certSave(cert);
+
+				if (r) {
 					alert('Guardado');
+				} else {
+					alert('No se pudo guardar');
 				}
 			} catch (error) {
 				console.log(error);
+				alert('No se pudo guardar');
 			}
 		}
 	};
 
 	export const getInfo = async () => {
 		try {
-			let response = await fetch('/device/cert');
-			let data = await response.json();
-			console.log(data);
-
-			if (response.status == 200 && data && data.cfp) {
-				cert = data.cfp;
-			}
+			cert = await certGet();
 		} catch (error) {
 			console.trace(error);
 		}

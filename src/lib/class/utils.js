@@ -41,17 +41,14 @@ export function dispatch_events(dispatch, event_name, value) {
 }
 
 export async function certGet() {
-	let d = {};
+	let d = "";
 	try {
-		let response = await fetch('/device/info');
+		let response = await fetch('/device/cert');
 		let data = await response.json();
+		console.log(data);
 
-		if (response.status == 200 && data) {
-			d.name = data.name || '';
-			d.ChipModel = data.ChipModel || '';
-			d.EfuseMac = data.EfuseMac || '';
-			d.deviceId = data.deviceId || '';
-			d.wsHost = data.wsHost || '';
+		if (response.status == 200 && data && data.cfp) {
+			d = data.cfp;
 		}
 	} catch (error) {
 		console.trace(error);
@@ -60,21 +57,19 @@ export async function certGet() {
 }
 
 /**
- * @param {string} name
- * @param {string} deviceId
- * @param {string} wsHost
+ * @param {string} cert
  */
-export async function certSave(name, deviceId, wsHost) {
+export async function certSave(cert) {
 	try {
-		let response = await fetch('/device/info', {
+		let response = await fetch('/device/cert', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({ name: name, deviceId: deviceId, wsHost: wsHost })
+			body: JSON.stringify({ cfp: cert })
 		});
 		let data = await response.json();
-		//	console.log(data);
+		console.log(data);
 		if (response.status == 200 && data) {
 			return true;
 		} else {

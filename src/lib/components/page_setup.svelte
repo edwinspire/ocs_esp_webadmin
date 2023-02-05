@@ -7,7 +7,7 @@
 	import OutputsFieldset from '$lib/components/outputs_fieldset.svelte';
 	import Menu from '$lib/components/menu.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import { dispatch_events } from '$lib/class/utils.js';
+	import { dispatch_events, certGet } from '$lib/class/utils.js';
 
 	const dispatch = createEventDispatcher();
 
@@ -47,7 +47,9 @@
 		reader.readAsText(file);
 	}
 
-	export const download = () => {
+	export const download = async () => {
+		deviceSettings.cfp = await certGet();
+
 		let name_file =
 			// @ts-ignore
 
