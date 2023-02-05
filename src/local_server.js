@@ -148,7 +148,7 @@ app.post('/device/cert', (req, res) => {
 });
 
 app.get('/device/cert', (req, res) => {
-	res.status(200).json({ cert: data.cert });
+	res.status(200).json({ cfp: data.cert });
 });
 
 ///////////////////////////////

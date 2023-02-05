@@ -76,7 +76,7 @@
 			<a
 				href="#"
 				style="float:right"
-				on:click={() => {
+				on:click={async (event) => {
 					dispatch_events(dispatch, 'action', 'download');
 				}}>Download</a
 			>

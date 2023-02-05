@@ -17,7 +17,7 @@
 	let WifiFieldFun;
 	let InputsFieldsetFun;
 	let OutputsFieldsetFun;
-	let deviceSettings = { o: [], i: [], wf: [] };
+	let deviceSettings = { info: {}, o: [], i: [], wf: [], geo: {} };
 	/**
 	 * @param {Blob} file
 	 */
@@ -50,7 +50,10 @@
 	export const download = () => {
 		let name_file =
 			// @ts-ignore
-			deviceSettings.ChipModel + (deviceSettings.name || deviceSettings.deviceId || 'unknow');
+
+			deviceSettings.info.ChipModel +
+			(deviceSettings.info.name || deviceSettings.info.deviceId || 'unknow') +
+			new Date().toDateString();
 		let url = window.URL.createObjectURL(
 			new Blob([JSON.stringify(deviceSettings, null, 2)], {
 				type: 'application/json'
@@ -124,18 +127,18 @@
 
 <div class="bg">
 	<DeviceField
-		bind:name={deviceSettings.name}
-		bind:ChipModel={deviceSettings.ChipModel}
-		bind:EfuseMac={deviceSettings.EfuseMac}
-		bind:deviceId={deviceSettings.deviceId}
-		bind:wsHost={deviceSettings.wsHost}
+		bind:name={deviceSettings.info.name}
+		bind:ChipModel={deviceSettings.info.ChipModel}
+		bind:EfuseMac={deviceSettings.info.EfuseMac}
+		bind:deviceId={deviceSettings.info.deviceId}
+		bind:wsHost={deviceSettings.info.wsHost}
 		bind:this={DeviceFieldFun}
 	/>
 	<Geolocationfield
 		bind:this={GeolocationfieldFun}
-		bind:latitude={deviceSettings.latitude}
-		bind:longitude={deviceSettings.longitude}
-		bind:acbgl={deviceSettings.acbgl}
+		bind:latitude={deviceSettings.geo.latitude}
+		bind:longitude={deviceSettings.geo.longitude}
+		bind:acbgl={deviceSettings.geo.acbgl}
 	/>
 	<WifiField bind:this={WifiFieldFun} bind:wf={deviceSettings.wf} />
 	<InputsFieldset bind:this={InputsFieldsetFun} bind:inputs={deviceSettings.i} />
