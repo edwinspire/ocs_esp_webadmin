@@ -18,8 +18,8 @@
 			let response = await fetch('/device/inputs');
 			let data = await response.json();
 
-			if (response.status == 200 && data && data.i && Array.isArray(data.i)) {
-				inputs = data.i;
+			if (response.status == 200 && data && Array.isArray(data)) {
+				inputs = data;
 			}
 		} catch (error) {
 			console.trace(error);
@@ -33,7 +33,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ i: inputs })
+				body: JSON.stringify(inputs)
 			});
 			let data = await response.json();
 			//	console.log(data);
@@ -94,6 +94,7 @@
 
 	onDestroy(() => {
 		clearInterval(interval_status);
+		//	alert('Destruido input');
 	});
 </script>
 

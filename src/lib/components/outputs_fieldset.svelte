@@ -18,8 +18,12 @@
 			let data = await response.json();
 
 			if (response.status == 200 && data) {
-				outputs = data.o;
-				led = data.led;
+				if (data && data.o && Array.isArray(data.o)) {
+					outputs = data.o;
+				}
+				if (data.led) {
+					led = data.led;
+				}
 			}
 		} catch (error) {
 			console.trace(error);
@@ -102,6 +106,7 @@
 
 	onDestroy(() => {
 		clearInterval(interval_status);
+		//alert('Destruido out');
 	});
 </script>
 

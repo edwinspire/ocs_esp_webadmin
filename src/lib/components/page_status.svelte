@@ -12,8 +12,8 @@
 	let OutputsFieldsetFun;
 	// @ts-ignore
 	let InputsFieldsetFun;
-
-	
+	// @ts-ignore
+	let DeviceFieldFun;
 </script>
 
 <Menu
@@ -27,13 +27,9 @@
 			switch (e.detail.value) {
 				case 'get':
 					//console.log(InputsFieldsetFun, OutputsFieldsetFun);
+					DeviceFieldFun.getInfo();
 					InputsFieldsetFun.getInfo();
 					OutputsFieldsetFun.getInfo();
-					break;
-				case 'save':
-					InputsFieldsetFun.save();
-					OutputsFieldsetFun.save();
-
 					break;
 			}
 		} else {
@@ -42,6 +38,6 @@
 	}}
 />
 
-<DeviceField showdeviceIdEncrypted={false} />
+<DeviceField bind:this={DeviceFieldFun} showdeviceIdEncrypted={false} />
 <InputsFieldset bind:this={InputsFieldsetFun} />
 <OutputsFieldset bind:this={OutputsFieldsetFun} />

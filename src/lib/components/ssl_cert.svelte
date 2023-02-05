@@ -1,8 +1,10 @@
 <script>
+	import { onMount } from 'svelte/internal';
+
 	/**
 	 * @type {any}
 	 */
-	 let cert;
+	let cert;
 	export const save = async () => {
 		if (confirm('Desea guardar los cambios?')) {
 			try {
@@ -11,7 +13,7 @@
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ cert: cert })
+					body: JSON.stringify({ cfp: cert })
 				});
 				let data = await response.json();
 				console.log(data);
@@ -29,12 +31,21 @@
 			let response = await fetch('/device/cert');
 			let data = await response.json();
 			console.log(data);
-			cert = data.cert;
+
+			if (response.status == 200 && data && data.cfp) {
+				cert = data.cfp;
+			}
 		} catch (error) {
 			console.trace(error);
 		}
 	};
-
+	onMount(async () => {
+		try {
+			await getInfo();
+		} catch (error) {
+			console.log(error);
+		}
+	});
 </script>
 
 <fieldset class="fset">

@@ -17,11 +17,11 @@
 			let data = await response.json();
 
 			if (response.status == 200 && data) {
-				name = data.name;
-				ChipModel = data.ChipModel;
-				EfuseMac = data.EfuseMac;
-				deviceId = data.deviceId;
-				wsHost = data.wsHost;
+				name = data.name || '';
+				ChipModel = data.ChipModel || '';
+				EfuseMac = data.EfuseMac || '';
+				deviceId = data.deviceId || '';
+				wsHost = data.wsHost || '';
 			}
 		} catch (error) {
 			console.trace(error);
