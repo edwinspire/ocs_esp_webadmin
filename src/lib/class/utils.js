@@ -41,7 +41,7 @@ export function dispatch_events(dispatch, event_name, value) {
 }
 
 export async function certGet() {
-	let d = "";
+	let d = '';
 	try {
 		let response = await fetch('/device/cert');
 		let data = await response.json();
@@ -60,23 +60,27 @@ export async function certGet() {
  * @param {string} cert
  */
 export async function certSave(cert) {
-	try {
-		let response = await fetch('/device/cert', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ cfp: cert })
-		});
-		let data = await response.json();
-		console.log(data);
-		if (response.status == 200 && data) {
-			return true;
-		} else {
+	if (cert) {
+		try {
+			let response = await fetch('/device/cert', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ cfp: cert })
+			});
+			let data = await response.json();
+			console.log(data);
+			if (response.status == 200 && data) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (error) {
+			console.log(error);
 			return false;
 		}
-	} catch (error) {
-		console.log(error);
+	} else {
 		return false;
 	}
 }

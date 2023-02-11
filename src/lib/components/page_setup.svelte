@@ -7,7 +7,7 @@
 	import OutputsFieldset from '$lib/components/outputs_fieldset.svelte';
 	import Menu from '$lib/components/menu.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import { dispatch_events, certGet } from '$lib/class/utils.js';
+	import { dispatch_events, certGet, certSave } from '$lib/class/utils.js';
 
 	const dispatch = createEventDispatcher();
 
@@ -76,7 +76,8 @@
 			const promise3 = WifiFieldFun.save();
 			const promise4 = InputsFieldsetFun.save();
 			const primise5 = OutputsFieldsetFun.save();
-			const promises = [promise1, promise2, promise3, promise4, primise5];
+			const primise6 = certSave(deviceSettings.cfp);
+			const promises = [promise1, promise2, promise3, promise4, primise5, primise6];
 
 			Promise.allSettled(promises).then((results) => {
 				if (
@@ -144,7 +145,11 @@
 	/>
 	<WifiField bind:this={WifiFieldFun} bind:wf={deviceSettings.wf} />
 	<InputsFieldset bind:this={InputsFieldsetFun} bind:inputs={deviceSettings.i} />
-	<OutputsFieldset bind:this={OutputsFieldsetFun} bind:outputs={deviceSettings.o} />
+	<OutputsFieldset
+		bind:this={OutputsFieldsetFun}
+		bind:outputs={deviceSettings.o}
+		bind:led={deviceSettings.led}
+	/>
 
 	<fieldset class="fset">
 		<legend class="legent">Cargar archivo de configuración</legend>
