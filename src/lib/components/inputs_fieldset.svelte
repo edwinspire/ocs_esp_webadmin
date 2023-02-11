@@ -7,6 +7,7 @@
 	import InputComp from '$lib/components/input.svelte';
 	import InputStatus from '$lib/components/input_status.svelte';
 	import { onMount } from 'svelte/internal';
+	import { status_inputs } from '$lib/stores/status.js';
 
 	/**
 	 * @type {any[]}
@@ -50,7 +51,9 @@
 	/**
 	 * @type {any}
 	 */
-	let interval_status;
+
+/*
+	 let interval_status;
 
 	async function getStatus() {
 		try {
@@ -75,6 +78,28 @@
 			console.trace(error);
 		}
 	}
+	*/
+
+	status_inputs.subscribe((data) => {
+		//countValue = value;
+		console.log('Ha cambiado ', data);
+
+		if (data && Array.isArray(data)) {
+			data.forEach((item) => {
+				inputs = inputs.map((m) => {
+					let m1 = { ...m };
+					// @ts-ignore
+					if (item.gpio == m.gpio) {
+						// @ts-ignore
+						m1.value = item.value;
+						// @ts-ignore
+						m1.status = item.status;
+					}
+					return m1;
+				});
+			});
+		}
+	});
 
 	onMount(async () => {
 		try {
@@ -83,17 +108,20 @@
 			console.log(error);
 		}
 
+		/*
 		interval_status = setInterval(async () => {
 			try {
 				await getStatus();
 			} catch (error) {
 				console.log(error);
 			}
-		}, 1500);
+		}, 30000);
+		*/
+
 	});
 
 	onDestroy(() => {
-		clearInterval(interval_status);
+		//clearInterval(interval_status);
 		//	alert('Destruido input');
 	});
 </script>

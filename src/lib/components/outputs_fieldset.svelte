@@ -4,6 +4,7 @@
 	import EnabledComponent from '$lib/components/enable_button.svelte';
 	import InputComp from '$lib/components/input.svelte';
 	import { onMount } from 'svelte/internal';
+	import { status_outputs } from '$lib/stores/status.js';
 
 	/**
 	 * @type {any[]}
@@ -54,6 +55,7 @@
 	/**
 	 * @type {any}
 	 */
+	/*
 	let interval_status;
 
 	async function getStatus() {
@@ -70,7 +72,7 @@
 					led_status = 'led_inactived';
 				}
 
-				data.o.forEach((/** @type {{ gpio: any; status: any; }} */ item) => {
+				data.o.forEach(( item) => {
 					// @ts-ignore
 					outputs = outputs.map((m) => {
 						// @ts-ignore
@@ -87,6 +89,36 @@
 			console.trace(error);
 		}
 	}
+	*/
+
+	status_outputs.subscribe((data) => {
+		//countValue = value;
+		console.log('Ha cambiado ', data);
+
+		// @ts-ignore
+		if (data && data.o && Array.isArray(data.o)) {
+			// @ts-ignore
+			if (data.led) {
+				led_status = 'led_actived';
+			} else {
+				led_status = 'led_inactived';
+			}
+
+			// @ts-ignore
+			data.o.forEach((item) => {
+				// @ts-ignore
+				outputs = outputs.map((m) => {
+					// @ts-ignore
+					let m1 = { ...m };
+					// @ts-ignore
+					if (item.gpio == m.gpio) {
+						m1.status = item.status;
+					}
+					return m1;
+				});
+			});
+		}
+	});
 
 	onMount(async () => {
 		try {
@@ -94,7 +126,7 @@
 		} catch (error) {
 			console.log(error);
 		}
-
+		/*
 		interval_status = setInterval(async () => {
 			try {
 				await getStatus();
@@ -102,10 +134,11 @@
 				console.log(error);
 			}
 		}, 1500);
+		*/
 	});
 
 	onDestroy(() => {
-		clearInterval(interval_status);
+		//		clearInterval(interval_status);
 		//alert('Destruido out');
 	});
 </script>
