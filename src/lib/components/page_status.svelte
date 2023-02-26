@@ -9,10 +9,19 @@
 	const dispatch = createEventDispatcher();
 
 	// @ts-ignore
+	/**
+	 * @type {OutputsFieldset}
+	 */
 	let OutputsFieldsetFun;
 	// @ts-ignore
+	/**
+	 * @type {InputsFieldset}
+	 */
 	let InputsFieldsetFun;
 	// @ts-ignore
+	/**
+	 * @type {DeviceField}
+	 */
 	let DeviceFieldFun;
 </script>
 
@@ -22,14 +31,14 @@
 	show_get={true}
 	show_reboot={true}
 	show_save={false}
-	on:event={(e) => {
+	on:event={async (e) => {
 		if (e.detail.name == 'action') {
 			switch (e.detail.value) {
 				case 'get':
 					//console.log(InputsFieldsetFun, OutputsFieldsetFun);
-					DeviceFieldFun.getInfo();
-					InputsFieldsetFun.getInfo();
-					OutputsFieldsetFun.getInfo();
+					await DeviceFieldFun.getInfo();
+					await InputsFieldsetFun.getInfo();
+					await OutputsFieldsetFun.getInfo();
 					break;
 			}
 		} else {

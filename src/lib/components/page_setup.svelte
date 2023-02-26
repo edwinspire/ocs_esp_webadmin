@@ -69,16 +69,24 @@
 		a.remove(); //afterwards we remove the element again
 	};
 
-	export const save = () => {
+	export const save = async () => {
 		if (confirm('Save?')) {
-			const promise1 = DeviceFieldFun.save();
-			const promise2 = GeolocationfieldFun.save();
-			const promise3 = WifiFieldFun.save();
-			const promise4 = InputsFieldsetFun.save();
-			const primise5 = OutputsFieldsetFun.save();
-			const primise6 = certSave(deviceSettings.cfp);
-			const promises = [promise1, promise2, promise3, promise4, primise5, primise6];
+			// Se hace que el guardado sea secuencial para evitar problemas de memoria en dispositivos más pequeños
+			const dev = await DeviceFieldFun.save();
+			const geo = await GeolocationfieldFun.save();
+			const wifi = await WifiFieldFun.save();
+			const input = await InputsFieldsetFun.save();
+			const out = await OutputsFieldsetFun.save();
+			const cert = await certSave(deviceSettings.cfp);
+			//const promises = [promise1, promise2, promise3, promise4, primise5, primise6];
 
+			if (dev && geo && wifi && input && out && cert) {
+				alert('Guardado');
+			} else {
+				alert('No se pudo guardar');
+			}
+
+			/*
 			Promise.allSettled(promises).then((results) => {
 				if (
 					results.some((item) => {
@@ -90,15 +98,16 @@
 					alert('No se pudo guardar');
 				}
 			});
+			*/
 		}
 	};
 
-	export const getInfo = () => {
-		DeviceFieldFun.getInfo();
-		GeolocationfieldFun.getInfo();
-		WifiFieldFun.getInfo();
-		InputsFieldsetFun.getInfo();
-		OutputsFieldsetFun.getInfo();
+	export const getInfo = async () => {
+		await DeviceFieldFun.getInfo();
+		await GeolocationfieldFun.getInfo();
+		await WifiFieldFun.getInfo();
+		await InputsFieldsetFun.getInfo();
+		await OutputsFieldsetFun.getInfo();
 	};
 </script>
 
