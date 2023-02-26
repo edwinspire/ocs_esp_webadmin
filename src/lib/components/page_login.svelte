@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import Menu from '$lib/components/menu.svelte';
+//	import Menu from '$lib/components/menu.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { dispatch_events } from '$lib/class/utils.js';
 	import { version } from '$app/environment';
@@ -14,6 +14,11 @@
 
 	onMount(() => {});
 </script>
+
+<svelte:head>
+	<title>Login</title>
+	<meta name="description" content="Login app" />
+</svelte:head>
 
 <div class="modal">
 	<form class="modal-content animate" action="#" method="post">

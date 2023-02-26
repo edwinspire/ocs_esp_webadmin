@@ -47,6 +47,11 @@
 	}}
 />
 
+<svelte:head>
+	<title>Status</title>
+	<meta name="description" content="Status" />
+</svelte:head>
+
 <DeviceField bind:this={DeviceFieldFun} showdeviceIdEncrypted={false} />
 <InputsFieldset bind:this={InputsFieldsetFun} />
 <OutputsFieldset bind:this={OutputsFieldsetFun} />
