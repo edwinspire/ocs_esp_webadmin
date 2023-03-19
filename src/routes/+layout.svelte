@@ -3,12 +3,26 @@
 	import 'bulma/css/bulma.min.css';
 	import { onMount } from 'svelte';
 	import { status_inputs, status_outputs } from '$lib/stores/status.js';
+	//	import { page } from '$app/stores';
+	import { SessionDB } from '$lib/class/utils.js';
+
+	let data_store = {};
 
 	let websocket;
+	let host = 'localhost';
+
 	function wsConnect() {
-		let url_wwebsocket = 'ws://' + window.location.host + '/ws';
+		//		host = $page.url.origin;
+		console.log(window.location);
+		data_store.read();
+		host = data_store.data.host || window.location.host;
+		//host = window.location.host;
+		//alert(host);
+		//alert(window.location.host);
+
+		let url_wwebsocket = 'ws://' + host + '/ws';
 		if (window.location.protocol.includes('https')) {
-			url_wwebsocket = 'wss://' + window.location.host + '/ws';
+			url_wwebsocket = 'wss://' + host + '/ws';
 		}
 		console.log('Trying to open a WebSocket connection...', url_wwebsocket);
 		websocket = new WebSocket(url_wwebsocket);
@@ -56,7 +70,10 @@
 	}
 
 	onMount(async () => {
-
+		data_store = new SessionDB('data_user');
+		host = data_store.data.host || window.location.host;
+		data_store.data.host = host;
+		data_store.write();
 		status_inputs.set([]);
 		if ('WebSocket' in window) {
 			wsConnect();
@@ -67,7 +84,7 @@
 </script>
 
 <svelte:head>
-	<link rel="apple-touch-icon" href="./pwa-192x192.png">
+	<link rel="apple-touch-icon" href="./pwa-192x192.png" />
 </svelte:head>
 
 <main>

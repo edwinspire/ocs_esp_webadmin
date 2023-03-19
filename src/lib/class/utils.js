@@ -84,3 +84,37 @@ export async function certSave(cert) {
 		return false;
 	}
 }
+
+export class SessionDB {
+	data = {};
+	_name_storage = 'ss';
+	/**
+	 * @param {string} name_storage
+	 */
+	constructor(name_storage) {
+		this._name_storage = name_storage || this._name_storage;
+		this.read();
+	}
+
+	write() {
+		if (typeof window !== 'undefined') {
+			sessionStorage.setItem(this._name_storage, JSON.stringify(this.data));
+		}else{
+			console.error('window is not defined');
+		}	
+	}
+
+	read() {
+		try {
+			// @ts-ignore
+			this.data = JSON.parse(sessionStorage.getItem(this._name_storage)) || {};
+		} catch (error) {
+			this.data = {};
+			console.error(error);
+		}
+	}
+	clear(){
+		this.data = {};
+		this.write();
+	}
+}
