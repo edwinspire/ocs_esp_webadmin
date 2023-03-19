@@ -40,7 +40,7 @@
 
 <fieldset class="fset">
 	<legend class="legent">SSL Certificate</legend>
-	<textarea class="ca" rows="25" cols="50" maxlength="2000" bind:value={cert} />
+	<textarea class="textarea" rows="25" cols="50" maxlength="2000" bind:value={cert} />
 </fieldset>
 
 <style>
@@ -48,11 +48,6 @@
 		margin: 1em;
 	}
 
-	.ca {
-		background-color: #333;
-		width: 100%;
-		color: white;
-	}
 	.legent {
 		font-size: 1.5em;
 	}

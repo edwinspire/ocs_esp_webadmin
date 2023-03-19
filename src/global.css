@@ -1,23 +1,7 @@
-input {
-	width: 100%;
-	padding: 12px 20px;
-	margin: 4px 0;
-	box-sizing: border-box;
-	border: none;
-	background-color: #333;
-	color: white;
-}
-
-select {
-	background-color: #333;
-	color: white;
-	margin: 4px 0;
-	height: 40px;
-	width: 100%;
-}
 .fset {
 	margin: 1em;
 }
+
 .legent {
 	font-size: 1.5em;
 }
@@ -29,4 +13,29 @@ select {
 	align-items: stretch;
 	width: auto;
 	height: auto;
+}
+
+fieldset {
+	display: block !important;
+	margin-inline-start: 2px !important;
+	margin-inline-end: 2px !important;
+	padding-block-start: 0.35em !important;
+	padding-inline-start: 0.75em !important;
+	padding-inline-end: 0.75em !important;
+	padding-block-end: 0.625em !important;
+	min-inline-size: min-content !important;
+	border-width: 2px !important;
+	border-style: groove !important;
+	border-color: rgb(192, 192, 192) !important;
+	border-image: initial !important;
+}
+
+legend {
+	display: block !important;
+	padding-inline-start: 2px !important;
+	padding-inline-end: 2px !important;
+	border-width: initial !important;
+	border-style: none !important;
+	border-color: initial !important;
+	border-image: initial !important;
 }

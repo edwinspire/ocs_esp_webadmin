@@ -1,7 +1,7 @@
 <script>
 	export let value = true;
 	export let label = '';
-
+export let  disabled = false;
 	$: new_text = text_label(value);
 
 	let class_status = '';
@@ -24,7 +24,7 @@
 	<label for="fname">{label}</label>
 {/if}
 
-<input class={class_status} disabled type="text" value={new_text} />
+<input class={class_status} disabled={disabled} type="text" value={new_text} />
 
 <style>
 	.normal {

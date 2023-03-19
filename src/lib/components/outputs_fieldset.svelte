@@ -12,7 +12,7 @@
 	export let outputs = [];
 	export let led = -1;
 	let led_status = 'led_inactived';
-
+export let disabled = true;
 	export const getInfo = async () => {
 		try {
 			let response = await fetch('/device/outputs');
@@ -147,7 +147,7 @@
 	<legend class="legent">Outputs</legend>
 
 	<div class={led_status}>
-		<InputComp type="number" label="GPIO Led Status" bind:value={led} />
+		<InputComp type="number" disabled={disabled} label="GPIO Led Status" bind:value={led} />
 	</div>
 
 	<div class="grid-container-outputs">
@@ -166,9 +166,9 @@
 			<div>
 				<EnabledComponent bind:enabled />
 			</div>
-			<div><InputComp type="text" maxlength="15" bind:value={name} /></div>
-			<div><InputComp type="number" bind:value={gpio} /></div>
-			<div><OutputStatus bind:value={status} /></div>
+			<div><InputComp type="text" maxlength="15" bind:value={name} disabled={disabled}/></div>
+			<div><InputComp type="number" bind:value={gpio}  disabled={disabled}/></div>
+			<div><OutputStatus bind:value={status}  disabled={disabled}/></div>
 		{/each}
 	</div>
 </fieldset>

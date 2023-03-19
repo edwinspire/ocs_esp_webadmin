@@ -10,6 +10,9 @@
 	export let deviceId = '';
 	export let wsHost = '';
 	export let showdeviceIdEncrypted = true;
+	export let name_disabled = true;
+	export let wsHost_disabled = true;
+	export let showWSHost = false;
 
 	export const getInfo = async () => {
 		try {
@@ -62,45 +65,42 @@
 <fieldset class="fset">
 	<legend class="legent">Device</legend>
 
-	<div class="flex-container">
-		<div class="f5">
+	<div class="columns is-multiline is-mobile">
+		<div class="column is-half">
 			<InputComp label="Chip Model" disabled={true} bind:value={ChipModel} />
 		</div>
-
-		<div class="f5">
+		<div class="column is-half">
 			<InputComp label="MAC" disabled={true} bind:value={EfuseMac} />
 		</div>
-	</div>
-
-	<div>
-		<InputComp label="Name" maxlength="30" bind:value={name} />
-	</div>
-
-	{#if showdeviceIdEncrypted}
-		<div>
-			<InputComp
-				label="Encrypted Device ID"
-				maxlength="200"
-				bind:value={deviceId}
-				on:change={() => {
-					realDeviceId = GetDeviceID(deviceId);
-				}}
-			/>
+		<div class="column is-full">
+			<InputComp label="Name" maxlength="30" disabled={name_disabled} bind:value={name} />
 		</div>
-	{/if}
+		{#if showdeviceIdEncrypted}
+			<div class="column is-full">
+				<InputComp
+					label="Encrypted Device ID"
+					maxlength="200"
+					bind:value={deviceId}
+					on:change={() => {
+						realDeviceId = GetDeviceID(deviceId);
+					}}
+				/>
+			</div>
+		{/if}
 
-	<div>
-		<InputComp label="Device ID" maxlength="200" disabled={true} value={GetDeviceID(deviceId)} />
-	</div>
+		<div class="column is-full">
+			<InputComp label="Device ID" maxlength="200" disabled={true} value={GetDeviceID(deviceId)} />
+		</div>
 
-	<div>
-		<InputComp label="Websocket Host" maxlength="100" bind:value={wsHost} />
+		{#if showWSHost}
+			<div class="column is-full">
+				<InputComp
+					label="Websocket Host"
+					maxlength="100"
+					disabled={wsHost_disabled}
+					bind:value={wsHost}
+				/>
+			</div>
+		{/if}
 	</div>
 </fieldset>
-
-<style>
-	.f5 {
-		flex-grow: 5;
-		margin: 5px;
-	}
-</style>

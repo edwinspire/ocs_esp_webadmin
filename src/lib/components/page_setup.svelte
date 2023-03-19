@@ -139,6 +139,7 @@
 
 <div class="bg">
 	<DeviceField
+		showWSHost={true}
 		bind:name={deviceSettings.info.name}
 		bind:ChipModel={deviceSettings.info.ChipModel}
 		bind:EfuseMac={deviceSettings.info.EfuseMac}
@@ -162,47 +163,36 @@
 
 	<fieldset class="fset">
 		<legend class="legent">Cargar archivo de configuración</legend>
-		<div class="button">
-			<input
-				class=""
-				type="file"
-				accept=".json"
-				placeholder="Cargar Configuración"
-				on:change={(event) => {
-					// @ts-ignore
-					const fileList = event.target.files;
-					console.log(fileList);
 
-					readFile(fileList[0]);
-				}}
-			/>
+		<div class="columns is-multiline is-mobile">
+			<div class="column is-one-quarter">
+				<div class="file is-small">
+					<label class="file-label">
+						<input
+							class="file-input"
+							type="file"
+							accept=".json"
+							placeholder="Cargar Configuración"
+							on:change={(event) => {
+								// @ts-ignore
+								const fileList = event.target.files;
+								console.log(fileList);
+
+								readFile(fileList[0]);
+							}}
+						/>
+						<span class="file-cta">
+							<span class="file-icon">
+								<i class="fas fa-upload" />
+							</span>
+							<span class="file-label"> Choose a file… </span>
+						</span>
+					</label>
+				</div>
+			</div>
+			<div class="column is-one-quarter">
+				<button class="button is-small" on:click={save} disabled={rebooting}>Save</button>
+			</div>
 		</div>
-		<button class="button button1" on:click={save} disabled={rebooting}>Save</button>
 	</fieldset>
 </div>
-
-<style>
-	.button {
-		border: none;
-		color: white;
-		padding: 16px 32px;
-		text-align: center;
-		text-decoration: none;
-		display: inline-block;
-		font-size: 16px;
-		margin: 4px 2px;
-		transition-duration: 0.4s;
-		cursor: pointer;
-	}
-
-	.button1 {
-		background-color: white;
-		color: black;
-		border: 2px solid #2b349f;
-	}
-
-	.button1:hover {
-		background-color: #2b349f;
-		color: white;
-	}
-</style>

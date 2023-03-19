@@ -87,48 +87,34 @@
 <fieldset class="fset">
 	<legend class="legent">Geolocation</legend>
 
-	<div class="flex-container">
-		<div class="f5">
+	<div class="columns is-multiline is-mobile">
+		<div class="column is-half">
 			<InputComp label="Latitude" maxlength="10" bind:value={latitude} />
 		</div>
-
-		<div class="f5">
+		<div class="column is-half">
 			<InputComp label="Longitude" maxlength="10" bind:value={longitude} />
 		</div>
-	</div>
-
-	<div>
-		<InputComp
-			maxlength="300"
-			label="From Open Street Maps Link"
-			bind:value={link_osm}
-			on:change={getGeoFromLink}
-		/>
-	</div>
-
-	<div class="flex-container">
-		<div class="f0">
-			<EnabledComponent bind:enabled={acbgl} />
+		<div class="column is-full">
+			<InputComp
+				maxlength="300"
+				label="From Open Street Maps Link"
+				bind:value={link_osm}
+				on:change={getGeoFromLink}
+			/>
 		</div>
-		<div class="f6">Allow device for community use by geolocation</div>
-	</div>
-
-	<div class="href_gelocation">
-		<!-- svelte-ignore security-anchor-rel-noreferrer -->
-		<a
-			target="_blank"
-			href={`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=19/${latitude}/${longitude}`}
-			>Show on Open Street Maps</a
-		>
+		<div class="column is-full">
+			<div class="f0">
+				<EnabledComponent bind:enabled={acbgl} />
+			</div>
+			<div class="f6">Allow device for community use by geolocation</div>
+		</div>
+		<div class="column is-full">
+			<a
+				target="_blank"
+				rel="noreferrer"
+				href={`https://www.openstreetmap.org/?mlat=${latitude}&mlon=${longitude}#map=19/${latitude}/${longitude}`}
+				>Show on Open Street Maps</a
+			>
+		</div>
 	</div>
 </fieldset>
-
-<style>
-	.f5 {
-		flex-grow: 5;
-		margin: 5px;
-	}
-	.href_gelocation {
-		text-align-last: end;
-	}
-</style>

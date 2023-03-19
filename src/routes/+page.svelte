@@ -4,24 +4,14 @@
 	import CompSetup from '$lib/components/page_setup.svelte';
 	import CompStatus from '$lib/components/page_status.svelte';
 	import CompCert from '$lib/components/page_cert.svelte';
-	import { version } from '$app/environment';
+	//	import { version } from '$app/environment';
 
-
+	let ShowWidget = false;
 	let cmp = CompLogin;
 
-	onMount(() => {
-	
-	});
+	onMount(() => {});
 </script>
 
-
-
-
-
-<div class="topnav">
-	<div class="tit">OPEN COMMUNITY SAFETY</div>
-	<div class="subtit">Version: {version}</div>
-</div>
 
 <svelte:component
 	this={cmp}
@@ -30,40 +20,21 @@
 			switch (e.detail.value) {
 				case 'status':
 					cmp = CompStatus;
+					ShowWidget = true;
 					break;
 				case 'setup':
 					cmp = CompSetup;
+					ShowWidget = true;
 					break;
 				case 'cert':
 					cmp = CompCert;
+					ShowWidget = true;
 					break;
 				default:
 					cmp = CompLogin;
+					ShowWidget = false;
 					break;
 			}
 		}
 	}}
 />
-
-<style>
-	.tit {
-		color: ghostwhite;
-		text-align: -webkit-center;
-		padding: 5px;
-		font-size: large;
-		font-weight: bold;
-	}
-
-	.subtit {
-		color: ghostwhite;
-		text-align: -webkit-center;
-		padding: 5px;
-		font-size: small;
-	}
-
-	/* Style the top navigation bar */
-	.topnav {
-		overflow: hidden;
-		background-color: #333;
-	}
-</style>

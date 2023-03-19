@@ -26,7 +26,7 @@
 </script>
 
 <Menu
-	isLogin={false}
+	
 	show_download={false}
 	show_get={true}
 	show_reboot={true}

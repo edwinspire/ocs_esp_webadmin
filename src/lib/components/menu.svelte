@@ -7,9 +7,16 @@
 	export let show_get = false;
 	export let show_save = false;
 	let rebooting = false;
-	export let isLogin = false;
+	//	export let isLogin = false;
 
 	const dispatch = createEventDispatcher();
+
+	let MenuOpen = false;
+
+	function ToggleClassMenu() {
+		console.log('Toogle');
+		MenuOpen = !MenuOpen;
+	}
 
 	async function click_reboot() {
 		if (confirm('Desea reiniciar la placa?')) {
@@ -29,121 +36,151 @@
 	}
 </script>
 
-<div class="topnav">
-	{#if isLogin}
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a
-			href="#"
-			style="float:right"
-			on:click={() => {
-				dispatch_events(dispatch, 'page', 'status');
-			}}>Login</a
-		>
-	{:else}
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a
-			href="#"
-			on:click={() => {
-				dispatch_events(dispatch, 'page', 'status');
-			}}>Status</a
-		>
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a
-			href="#"
-			on:click={() => {
-				dispatch_events(dispatch, 'page', 'setup');
-			}}>Setup</a
-		>
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a
-			href="#"
-			on:click={() => {
-				dispatch_events(dispatch, 'page', 'cert');
-			}}>Certificate</a
-		>
+<nav class="navbar is-transparent">
+	<div class="navbar-brand">
+		<span class="navbar-item title_menu"><strong>Open Community Safety</strong></span>
+		<!-- svelte-ignore a11y-missing-attribute -->
+		<!-- svelte-ignore a11y-click-events-have-key-events -->
+		<a class:is-active={MenuOpen} class="navbar-burger" on:click={ToggleClassMenu}>
+			<span />
+			<span />
+			<span />
+		</a>
+	</div>
 
-		<!-- svelte-ignore a11y-invalid-attribute -->
-		<a
-			href="#"
-			style="float:right"
-			on:click={() => {
-				dispatch_events(dispatch, 'page', 'login');
-			}}>Exit</a
-		>
-
-		{#if show_download}
+	<div class="navbar-menu" class:is-active={MenuOpen}>
+		<div class="navbar-start">
 			<!-- svelte-ignore a11y-invalid-attribute -->
 			<a
+				class="navbar-item"
 				href="#"
-				style="float:right"
-				on:click={async (event) => {
-					dispatch_events(dispatch, 'action', 'download');
-				}}>Download</a
-			>
-		{/if}
-
-		{#if show_reboot}
-			{#if rebooting}
-				<!-- svelte-ignore a11y-invalid-attribute -->
-				<a href="#" style="float:right">Rebooting...</a>
-			{:else}
-				<!-- svelte-ignore a11y-invalid-attribute -->
-				<a href="#" style="float:right" on:click={click_reboot}>Reboot</a>
-			{/if}
-		{/if}
-
-		{#if show_save}
-			<!-- svelte-ignore a11y-invalid-attribute -->
-			<a
-				href="#"
-				style="float:right"
 				on:click={() => {
-					dispatch_events(dispatch, 'action', 'save');
-				}}>Save</a
+					dispatch_events(dispatch, 'page', 'status');
+				}}
 			>
-		{/if}
-
-		{#if show_get}
+				Status
+			</a>
 			<!-- svelte-ignore a11y-invalid-attribute -->
 			<a
+				class="navbar-item"
 				href="#"
-				style="float:right"
 				on:click={() => {
-					dispatch_events(dispatch, 'action', 'get');
-				}}>Get</a
+					dispatch_events(dispatch, 'page', 'setup');
+				}}
 			>
-		{/if}
-	{/if}
-</div>
+				Setup
+			</a>
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			<a
+				class="navbar-item"
+				href="#"
+				on:click={() => {
+					dispatch_events(dispatch, 'page', 'cert');
+				}}
+			>
+				Certificate
+			</a>
+		</div>
+
+		<div class="navbar-end">
+			<div class="navbar-item">
+				<div class="field is-grouped">
+					{#if show_get}
+						<!-- svelte-ignore a11y-invalid-attribute -->
+
+						<p class="control">
+							<a
+								class="bd-tw-button button is-small"
+								href="#"
+								on:click={() => {
+									dispatch_events(dispatch, 'action', 'get');
+								}}
+							>
+								<span> Get </span>
+							</a>
+						</p>
+					{/if}
+
+					{#if show_save}
+						<!-- svelte-ignore a11y-invalid-attribute -->
+
+						<p class="control">
+							<a
+								class="button is-primary is-small"
+								href="#"
+								on:click={() => {
+									dispatch_events(dispatch, 'action', 'save');
+								}}
+							>
+								<span>Save</span>
+							</a>
+						</p>
+					{/if}
+
+					{#if show_download}
+						<p class="control">
+							<!-- svelte-ignore a11y-invalid-attribute -->
+							<a
+								class="button is-primary is-small"
+								href="#"
+								on:click={async (event) => {
+									dispatch_events(dispatch, 'action', 'download');
+								}}
+							>
+								<span>Download</span>
+							</a>
+						</p>
+					{/if}
+				</div>
+			</div>
+
+			<div class="navbar-item">
+				<div class="field is-grouped">
+					{#if show_reboot}
+						{#if rebooting}
+							<!-- svelte-ignore a11y-invalid-attribute -->
+							<p class="control">
+								<a class="button is-primary is-small" href="#">
+									<span>Rebooting</span>
+								</a>
+							</p>
+						{:else}
+							<!-- svelte-ignore a11y-invalid-attribute -->
+							<p class="control">
+								<a class="button is-primary is-small" href="#" on:click={click_reboot}>
+									<span>Reboot</span>
+								</a>
+							</p>
+						{/if}
+					{/if}
+
+					<p class="control">
+						<!-- svelte-ignore a11y-invalid-attribute -->
+						<a
+							class="button is-primary is-small"
+							href="#"
+							on:click={async (event) => {
+								dispatch_events(dispatch, 'page', 'login');
+							}}
+						>
+							<span>Exit</span>
+						</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</nav>
 
 <style>
-	/* Style the top navigation bar */
-	.topnav {
-		overflow: hidden;
-		background-color: #333;
-	}
-
-	/* Style the topnav links */
-	.topnav a {
-		float: left;
-		display: block;
-		color: #dbdbde;
-		text-align: center;
-		padding: 14px 16px;
-		text-decoration: none;
-	}
-
-	/* Change color on hover */
-	.topnav a:hover {
-		background-color: rgb(101, 101, 101);
-		color: black;
-	}
-
-	/* On screens that are 600px wide or less, make the menu links stack on top of each other instead of next to each other */
-	@media screen and (max-width: 600px) {
-		.topnav a {
-			float: none;
-			width: 100%;
-		}
+	.title_menu {
+		background: rgb(0, 209, 178);
+		background: linear-gradient(
+			51deg,
+			rgba(0, 209, 178, 1) 0%,
+			rgba(0, 209, 178, 1) 28%,
+			rgba(176, 241, 231, 1) 62%,
+			rgba(255, 255, 255, 1) 88%
+		);
 	}
 </style>

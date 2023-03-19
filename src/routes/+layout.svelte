@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../global.css';
+	import 'bulma/css/bulma.min.css';
 	import { onMount } from 'svelte';
 	import { status_inputs, status_outputs } from '$lib/stores/status.js';
 
@@ -66,7 +67,6 @@
 </script>
 
 <svelte:head>
-	<link rel="manifest" href="./manifest.json" />
 	<link rel="apple-touch-icon" href="./pwa-192x192.png">
 </svelte:head>
 
