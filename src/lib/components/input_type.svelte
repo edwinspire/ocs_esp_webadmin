@@ -12,10 +12,12 @@
 	];
 </script>
 
-<select bind:value={type} {disabled}>
-	{#each InputType as itype}
-		<option value={itype.value}>
-			{itype.text}
-		</option>
-	{/each}
-</select>
+<div class="select is-small">
+	<select bind:value={type} {disabled}>
+		{#each InputType as itype}
+			<option value={itype.value}>
+				{itype.text}
+			</option>
+		{/each}
+	</select></div>
+

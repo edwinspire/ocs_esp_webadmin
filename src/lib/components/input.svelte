@@ -36,7 +36,7 @@
 
 <div class="field">
 	{#if label && label.length > 0}
-		<label class="label" for="fname">{label}</label>
+		<label class="label is-small" for="fname">{label}</label>
 	{/if}
 	<div class="control">
 		{#if type == 'text'}
@@ -68,7 +68,17 @@
 				{disabled}
 				on:change={change}
 			/>
-		{:else if type == 'email'}
+			{:else if type == 'checkbox'}
+			<input
+				class="checkbox"
+				type="checkbox"
+				{maxlength}
+				bind:value
+				{disabled}
+				on:change={change}
+			/>
+
+			{:else if type == 'email'}
 			<input
 				class="input is-small"
 				type="email"

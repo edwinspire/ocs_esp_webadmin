@@ -36,9 +36,10 @@
 	}
 </script>
 
-<nav class="navbar is-transparent">
+<!-- svelte-ignore a11y-no-redundant-roles -->
+<nav class="navbar is-dark" role="navigation" aria-label="main navigation">
 	<div class="navbar-brand">
-		<span class="navbar-item title_menu"><strong>Open Community Safety</strong></span>
+		<span class="navbar-item title_menu"><strong class="has-text-white">Open Community Safety</strong></span>
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<!-- svelte-ignore a11y-click-events-have-key-events -->
 		<a class:is-active={MenuOpen} class="navbar-burger" on:click={ToggleClassMenu}>
@@ -171,16 +172,3 @@
 		</div>
 	</div>
 </nav>
-
-<style>
-	.title_menu {
-		background: rgb(0, 209, 178);
-		background: linear-gradient(
-			51deg,
-			rgba(0, 209, 178, 1) 0%,
-			rgba(0, 209, 178, 1) 28%,
-			rgba(176, 241, 231, 1) 62%,
-			rgba(255, 255, 255, 1) 88%
-		);
-	}
-</style>

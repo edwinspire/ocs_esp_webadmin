@@ -2,6 +2,9 @@
 	import InputComp from '$lib/components/input.svelte';
 	import { GetDeviceID } from '$lib/class/utils.js';
 	import { onMount } from 'svelte/internal';
+	import { SessionDB, createURL } from '$lib/class/utils.js';
+
+	const ldb_user = new SessionDB('data_user');
 
 	let realDeviceId = '';
 	export let name = '';
@@ -13,10 +16,21 @@
 	export let name_disabled = true;
 	export let wsHost_disabled = true;
 	export let showWSHost = false;
+	//let host = 'localhost';
 
 	export const getInfo = async () => {
 		try {
-			let response = await fetch('/device/info');
+			ldb_user.read();
+			//ldb_user.data.host = host;
+			let response = await fetch(createURL('http', ldb_user.data.host, '/device/info'), {
+				method: 'GET', // or 'PUT'
+				mode: 'cors',
+				//body: JSON.stringify({ u: user, p: pwd }), // data can be `string` or {object}!
+				headers: {
+					'Content-Type': 'application/json',
+					token: ldb_user.data.token
+				}
+			});
 			let data = await response.json();
 
 			if (response.status == 200 && data) {
@@ -33,7 +47,9 @@
 
 	export const save = async () => {
 		try {
-			let response = await fetch('/device/info', {
+			ldb_user.read();
+
+			let response = await fetch(createURL('http', ldb_user.data.host, '/device/info'), {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -55,6 +71,7 @@
 
 	onMount(async () => {
 		try {
+			ldb_user.read();
 			await getInfo();
 		} catch (error) {
 			console.log(error);
@@ -62,8 +79,8 @@
 	});
 </script>
 
-<fieldset class="fset">
-	<legend class="legent">Device</legend>
+<fieldset>
+	<legend>Device</legend>
 
 	<div class="columns is-multiline is-mobile">
 		<div class="column is-half">

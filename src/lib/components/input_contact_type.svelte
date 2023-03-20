@@ -7,10 +7,12 @@
 	];
 </script>
 
-<select bind:value={contact_type}>
-	{#each ContactType as itype}
-		<option value={itype.value}>
-			{itype.text}
-		</option>
-	{/each}
-</select>
+<div class="select is-small">
+	<select bind:value={contact_type}>
+		{#each ContactType as itype}
+			<option value={itype.value}>
+				{itype.text}
+			</option>
+		{/each}
+	</select>
+</div>

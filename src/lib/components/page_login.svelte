@@ -83,6 +83,8 @@
 						if (test.status == 200) {
 							let respuesta = await test.json();
 							console.log(respuesta);
+							ldb_user.data.token = respuesta.token;
+							ldb_user.write();
 							dispatch_events(dispatch, 'page', 'status');
 						} else if (test.status == 401) {
 							alert('Invalid credentials');

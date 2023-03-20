@@ -99,9 +99,9 @@ export class SessionDB {
 	write() {
 		if (typeof window !== 'undefined') {
 			sessionStorage.setItem(this._name_storage, JSON.stringify(this.data));
-		}else{
+		} else {
 			console.error('window is not defined');
-		}	
+		}
 	}
 
 	read() {
@@ -113,8 +113,49 @@ export class SessionDB {
 			console.error(error);
 		}
 	}
-	clear(){
+	clear() {
 		this.data = {};
 		this.write();
 	}
+}
+
+/**
+ * @param {string} protocol
+ * @param {string} host
+ * @param {string} path
+ */
+export function createURL(protocol, host, path) {
+	let u = '';
+
+	if (protocol && protocol.length > 0) {
+		protocol = protocol;
+	} else {
+		protocol = 'http';
+	}
+
+	if (typeof window !== 'undefined') {
+		host = host || window.location.host;
+	} else {
+		host = host || 'localhost';
+	}
+
+	u = `${protocol}://${host}${path}`;
+	return u;
+}
+
+/**
+ * @param {string} path
+ */
+export function createParamEndPoint(path) {
+	let data = {};
+	const ldb_user = new SessionDB('data_user');
+	data.headers = {
+		headers: {
+			'Content-Type': 'application/json',
+			// @ts-ignore
+			token: ldb_user.data.token
+		}
+	};
+	data.endpoint = createURL('http', ldb_user.data.host, path);
+	return data;
 }

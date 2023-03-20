@@ -14,20 +14,20 @@
 		let s = 'Undefined';
 		switch (status) {
 			case 1:
-				class_status = 'normal';
+				class_status = 'progress is-primary is-small';
 				s = 'Normal';
 				break;
 			case 2:
-				class_status = 'alarm';
+				class_status = 'progress is-danger is-small';
 				s = 'Alarm';
 				break;
 			case 3:
-				class_status = 'trouble';
+				class_status = 'progress is-warning is-small';
 				s = 'Trouble';
 				break;
 			default:
-				class_status = '';
-				s = 'Undefined';
+				class_status = 'progress is-small';
+				s = 'Valor';
 				break;
 		}
 
@@ -38,36 +38,10 @@
 {#if label && label.length > 0}
 	<label for="fname">{label}</label>
 {/if}
+<div>{new_text}</div>
 
-<input class={class_status} disabled type="text" value={new_text} />
-
-<style>
-	.normal {
-		width: 100%;
-		padding: 12px 20px;
-		margin: 4px 0;
-		box-sizing: border-box;
-		border: none;
-		background-color: green !important;
-		color: white;
-	}
-
-	.alarm {
-		width: 100%;
-		padding: 12px 20px;
-		margin: 4px 0;
-		box-sizing: border-box;
-		border: none;
-		background-color: red !important;
-		color: white;
-	}
-	.trouble {
-		width: 100%;
-		padding: 12px 20px;
-		margin: 4px 0;
-		box-sizing: border-box;
-		border: none;
-		background-color: yellow !important;
-		color: white;
-	}
-</style>
+{#if value > 0}
+	<progress class={class_status} max="4096" {value}>0%</progress>
+{:else}
+	<progress class={class_status} max="4096">0%</progress>
+{/if}

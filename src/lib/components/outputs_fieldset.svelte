@@ -5,6 +5,8 @@
 	import InputComp from '$lib/components/input.svelte';
 	import { onMount } from 'svelte/internal';
 	import { status_outputs } from '$lib/stores/status.js';
+	//	import { SessionDB, createURL } from '$lib/class/utils.js';
+	import { createParamEndPoint } from '$lib/class/utils.js';
 
 	/**
 	 * @type {any[]}
@@ -12,10 +14,13 @@
 	export let outputs = [];
 	export let led = -1;
 	let led_status = 'led_inactived';
-export let disabled = true;
+	export let disabled = true;
+
+	let data_endpoint = {};
+
 	export const getInfo = async () => {
 		try {
-			let response = await fetch('/device/outputs');
+			let response = await fetch(data_endpoint.endpoint);
 			let data = await response.json();
 
 			if (response.status == 200 && data) {
@@ -33,11 +38,9 @@ export let disabled = true;
 
 	export const save = async () => {
 		try {
-			let response = await fetch('/device/outputs', {
+			let response = await fetch(data_endpoint.endpoint, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: data_endpoint.headers,
 				body: JSON.stringify({ o: outputs, led: led })
 			});
 			let data = await response.json();
@@ -51,45 +54,6 @@ export let disabled = true;
 			console.log(error);
 		}
 	};
-
-	/**
-	 * @type {any}
-	 */
-	/*
-	let interval_status;
-
-	async function getStatus() {
-		try {
-			let response = await fetch('/device/outputs/status');
-			let data = await response.json();
-
-			console.log('geOutputsStatus : ', data);
-
-			if (data && data.o && Array.isArray(data.o)) {
-				if (data.led) {
-					led_status = 'led_actived';
-				} else {
-					led_status = 'led_inactived';
-				}
-
-				data.o.forEach(( item) => {
-					// @ts-ignore
-					outputs = outputs.map((m) => {
-						// @ts-ignore
-						let m1 = { ...m };
-						// @ts-ignore
-						if (item.gpio == m.gpio) {
-							m1.status = item.status;
-						}
-						return m1;
-					});
-				});
-			}
-		} catch (error) {
-			console.trace(error);
-		}
-	}
-	*/
 
 	status_outputs.subscribe((data) => {
 		//countValue = value;
@@ -122,19 +86,11 @@ export let disabled = true;
 
 	onMount(async () => {
 		try {
+			data_endpoint = createParamEndPoint('/device/inputs');
 			await getInfo();
 		} catch (error) {
 			console.log(error);
 		}
-		/*
-		interval_status = setInterval(async () => {
-			try {
-				await getStatus();
-			} catch (error) {
-				console.log(error);
-			}
-		}, 1500);
-		*/
 	});
 
 	onDestroy(() => {
@@ -143,11 +99,11 @@ export let disabled = true;
 	});
 </script>
 
-<fieldset class="fset">
-	<legend class="legent">Outputs</legend>
+<fieldset >
+	<legend >Outputs</legend>
 
 	<div class={led_status}>
-		<InputComp type="number" disabled={disabled} label="GPIO Led Status" bind:value={led} />
+		<InputComp type="number" {disabled} label="GPIO Led Status" bind:value={led} />
 	</div>
 
 	<div class="grid-container-outputs">
@@ -166,9 +122,9 @@ export let disabled = true;
 			<div>
 				<EnabledComponent bind:enabled />
 			</div>
-			<div><InputComp type="text" maxlength="15" bind:value={name} disabled={disabled}/></div>
-			<div><InputComp type="number" bind:value={gpio}  disabled={disabled}/></div>
-			<div><OutputStatus bind:value={status}  disabled={disabled}/></div>
+			<div><InputComp type="text" maxlength="15" bind:value={name} {disabled} /></div>
+			<div><InputComp type="number" bind:value={gpio} {disabled} /></div>
+			<div><OutputStatus bind:value={status} {disabled} /></div>
 		{/each}
 	</div>
 </fieldset>

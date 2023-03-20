@@ -8,15 +8,19 @@
 	import InputStatus from '$lib/components/input_status.svelte';
 	import { onMount } from 'svelte/internal';
 	import { status_inputs } from '$lib/stores/status.js';
+	import { createParamEndPoint } from '$lib/class/utils.js';
 
 	/**
 	 * @type {any[]}
 	 */
 	export let inputs = [];
 
+	let data_endpoint = {};
+
 	export const getInfo = async () => {
 		try {
-			let response = await fetch('/device/inputs');
+			// @ts-ignore
+			let response = await fetch(data_endpoint.endpoint, data_endpoint.headers);
 			let data = await response.json();
 
 			if (response.status == 200 && data && Array.isArray(data)) {
@@ -29,11 +33,11 @@
 
 	export const save = async () => {
 		try {
-			let response = await fetch('/device/inputs', {
+			// @ts-ignore
+			let response = await fetch(data_endpoint.endpoint, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				// @ts-ignore
+				headers: data_endpoint.headers,
 				body: JSON.stringify(inputs)
 			});
 			let data = await response.json();
@@ -47,38 +51,6 @@
 			console.log(error);
 		}
 	};
-
-	/**
-	 * @type {any}
-	 */
-
-/*
-	 let interval_status;
-
-	async function getStatus() {
-		try {
-			let response = await fetch('/device/inputs/status');
-			let data = await response.json();
-
-			console.log('getInputStatus : ', data);
-
-			if (data && Array.isArray(data)) {
-				data.forEach((item) => {
-					inputs = inputs.map((m) => {
-						let m1 = { ...m };
-						if (item.gpio == m.gpio) {
-							m1.value = item.value;
-							m1.status = item.status;
-						}
-						return m1;
-					});
-				});
-			}
-		} catch (error) {
-			console.trace(error);
-		}
-	}
-	*/
 
 	status_inputs.subscribe((data) => {
 		//countValue = value;
@@ -103,21 +75,12 @@
 
 	onMount(async () => {
 		try {
+			data_endpoint = createParamEndPoint('/device/inputs');
+
 			await getInfo();
 		} catch (error) {
 			console.log(error);
 		}
-
-		/*
-		interval_status = setInterval(async () => {
-			try {
-				await getStatus();
-			} catch (error) {
-				console.log(error);
-			}
-		}, 30000);
-		*/
-
 	});
 
 	onDestroy(() => {
@@ -126,52 +89,24 @@
 	});
 </script>
 
-<fieldset class="fset">
-	<legend class="legent">Inputs</legend>
+<fieldset>
+	<legend>Inputs</legend>
 
-	<div class="grid-container-inputs">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>Enabled</label></div>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>Label</label></div>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>GPIO</label></div>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>Input Type</label></div>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>Contact Type</label></div>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>Siren Type</label></div>
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<div><label>Status</label></div>
-
+	<div>
+		
+	<div class="columns is-multiline is-mobile ">
 		{#each inputs as { enabled, name, gpio, type, contact_type, siren_type, value, status }}
-			<div>
+			<div class="column is-half-mobile is-one-third-tablet is-one-fifth-desktop is-one-fifth-widescreen">
 				<EnabledComponent bind:enabled />
-			</div>
-			<div><InputComp type="text" bind:value={name} /></div>
-			<div><InputComp type="number" bind:value={gpio} /></div>
-
-			<div>
+				<InputComp type="text" label="Label" bind:value={name} />
+				<InputComp type="number" bind:value={gpio} />
 				<InputType bind:type />
-			</div>
-			<div>
 				<InputContactType bind:contact_type />
-			</div>
-			<div>
 				<InputSirenType bind:siren_type />
-			</div>
-			<div>
 				<InputStatus bind:value bind:status />
 			</div>
 		{/each}
 	</div>
-</fieldset>
+	</div>
 
-<style>
-	.grid-container-inputs {
-		display: grid;
-		grid-template-columns: auto auto auto auto auto auto auto;
-		gap: 2px;
-	}
-</style>
+</fieldset>

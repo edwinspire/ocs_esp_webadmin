@@ -10,10 +10,12 @@
 	];
 </script>
 
-<select bind:value={siren_type}>
-	{#each SirenType as itype}
-		<option value={itype.value}>
-			{itype.text}
-		</option>
-	{/each}
-</select>
+<div class="select is-small">
+	<select bind:value={siren_type}>
+		{#each SirenType as itype}
+			<option value={itype.value}>
+				{itype.text}
+			</option>
+		{/each}
+	</select>
+</div>

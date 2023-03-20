@@ -1,11 +1,3 @@
-.fset {
-	margin: 1em;
-}
-
-.legent {
-	font-size: 1.5em;
-}
-
 .flex-container {
 	display: -webkit-flex;
 	display: flex;
