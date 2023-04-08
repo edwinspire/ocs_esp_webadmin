@@ -2,7 +2,8 @@
 	import InputComp from '$lib/components/input.svelte';
 	import { GetDeviceID } from '$lib/class/utils.js';
 	import { onMount } from 'svelte/internal';
-	import { SessionDB, createURL } from '$lib/class/utils.js';
+	import { SessionDB, createParamEndPoint } from '$lib/class/utils.js';
+	//import { createParamEndPoint } from '$lib/class/utils.js';
 
 	const ldb_user = new SessionDB('data_user');
 
@@ -13,23 +14,22 @@
 	export let deviceId = '';
 	export let wsHost = '';
 	export let showdeviceIdEncrypted = true;
-	export let name_disabled = true;
+	export let name_disabled = false;
 	export let wsHost_disabled = true;
 	export let showWSHost = false;
 	//let host = 'localhost';
+
+	let data_endpoint = {};
 
 	export const getInfo = async () => {
 		try {
 			ldb_user.read();
 			//ldb_user.data.host = host;
-			let response = await fetch(createURL('http', ldb_user.data.host, '/device/info'), {
+			let response = await fetch(data_endpoint.endpoint, {
 				method: 'GET', // or 'PUT'
 				mode: 'cors',
 				//body: JSON.stringify({ u: user, p: pwd }), // data can be `string` or {object}!
-				headers: {
-					'Content-Type': 'application/json',
-					token: ldb_user.data.token
-				}
+				headers: data_endpoint.headers
 			});
 			let data = await response.json();
 
@@ -49,11 +49,9 @@
 		try {
 			ldb_user.read();
 
-			let response = await fetch(createURL('http', ldb_user.data.host, '/device/info'), {
+			let response = await fetch(data_endpoint.endpoint, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: data_endpoint.headers,
 				body: JSON.stringify({ name: name, deviceId: deviceId, wsHost: wsHost })
 			});
 			let data = await response.json();
@@ -72,6 +70,8 @@
 	onMount(async () => {
 		try {
 			ldb_user.read();
+
+			data_endpoint = createParamEndPoint('/device/info');
 			await getInfo();
 		} catch (error) {
 			console.log(error);

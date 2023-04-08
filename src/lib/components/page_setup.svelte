@@ -53,8 +53,8 @@
 		let name_file =
 			// @ts-ignore
 
-			deviceSettings.info.ChipModel +
-			(deviceSettings.info.name || deviceSettings.info.deviceId || 'unknow') +
+			deviceSettings.info.ChipModel +'_'+
+			(deviceSettings.info.name || deviceSettings.info.deviceId || 'unknow')+'_' +
 			new Date().toDateString();
 		let url = window.URL.createObjectURL(
 			new Blob([JSON.stringify(deviceSettings, null, 2)], {

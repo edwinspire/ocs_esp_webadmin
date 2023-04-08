@@ -2,28 +2,14 @@
 	import InputComp from '$lib/components/input.svelte';
 	import { onMount } from 'svelte/internal';
 	import EnabledComponent from '$lib/components/enable_button.svelte';
+	import { createParamEndPoint } from '$lib/class/utils.js';
 
+	let param_endpoint = {};
 	export let acbgl = false;
 	export let latitude = '';
 	export let longitude = '';
 
 	var link_osm = '';
-
-	/*
-	function getLocation() {
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition((position) => {
-				// @ts-ignore
-				deviceSettings = {
-					latitude: position.coords.latitude,
-					longitude: position.coords.longitude
-				};
-			});
-		} else {
-			alert('Geolocation is not supported by this browser.');
-		}
-	}
-*/
 
 	function getGeoFromLink() {
 		try {
@@ -40,7 +26,7 @@
 
 	export const getInfo = async () => {
 		try {
-			let response = await fetch('/device/geolocation');
+			let response = await fetch(param_endpoint.endpoint, { headers: param_endpoint.headers });
 			let data = await response.json();
 
 			if (response.status == 200 && data) {
@@ -55,11 +41,9 @@
 
 	export const save = async () => {
 		try {
-			let response = await fetch('/device/geolocation', {
+			let response = await fetch(param_endpoint.endpoint, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: param_endpoint.headers,
 				body: JSON.stringify({ acbgl: acbgl, latitude: latitude, longitude: longitude })
 			});
 			let data = await response.json();
@@ -77,6 +61,7 @@
 
 	onMount(async () => {
 		try {
+			param_endpoint = createParamEndPoint('/device/geolocation');
 			await getInfo();
 		} catch (error) {
 			console.log(error);

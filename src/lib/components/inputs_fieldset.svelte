@@ -20,7 +20,7 @@
 	export const getInfo = async () => {
 		try {
 			// @ts-ignore
-			let response = await fetch(data_endpoint.endpoint, data_endpoint.headers);
+			let response = await fetch(data_endpoint.endpoint, {headers: data_endpoint.headers});
 			let data = await response.json();
 
 			if (response.status == 200 && data && Array.isArray(data)) {

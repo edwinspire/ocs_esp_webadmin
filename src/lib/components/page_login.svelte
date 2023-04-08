@@ -67,6 +67,14 @@
 					//if (true) {
 					//dispatch_events(dispatch, 'page', 'status');
 
+					let user_type = 99;
+
+					if (user == 'admin') {
+						user_type = 0;
+					} else if (user == 'user') {
+						user_type = 1;
+					}
+
 					ldb_user.data.host = host;
 					ldb_user.write();
 
@@ -74,7 +82,7 @@
 						let test = await fetch(`http://${host}/device/login`, {
 							method: 'POST', // or 'PUT'
 							mode: 'cors',
-							body: JSON.stringify({ u: user, p: pwd }), // data can be `string` or {object}!
+							body: JSON.stringify({ u: user_type, p: pwd }), // data can be `string` or {object}!
 							headers: {
 								'Content-Type': 'application/json'
 							}
@@ -83,6 +91,7 @@
 						if (test.status == 200) {
 							let respuesta = await test.json();
 							console.log(respuesta);
+							ldb_user.data.user_type = user_type;
 							ldb_user.data.token = respuesta.token;
 							ldb_user.write();
 							dispatch_events(dispatch, 'page', 'status');

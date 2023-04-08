@@ -2,6 +2,9 @@
 	import InputComp from '$lib/components/input.svelte';
 	import { onMount } from 'svelte/internal';
 
+	import { createParamEndPoint } from '$lib/class/utils.js';
+
+	let param_endpoint = {};
 	/**
 	 * @type {any[]}
 	 */
@@ -9,7 +12,7 @@
 
 	export const getInfo = async () => {
 		try {
-			let response = await fetch('/device/wifi');
+			let response = await fetch(param_endpoint.endpoint, { headers: param_endpoint.headers });
 			let data = await response.json();
 
 			if (response.status == 200 && data && Array.isArray(data)) {
@@ -22,11 +25,9 @@
 
 	export const save = async () => {
 		try {
-			let response = await fetch('/device/wifi', {
+			let response = await fetch(param_endpoint.endpoint, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: param_endpoint.headers,
 				body: JSON.stringify(wf)
 			});
 			let data = await response.json();
@@ -43,6 +44,7 @@
 
 	onMount(async () => {
 		try {
+			param_endpoint = createParamEndPoint('/device/wifi');
 			await getInfo();
 		} catch (error) {
 			console.log(error);

@@ -42,8 +42,11 @@ export function dispatch_events(dispatch, event_name, value) {
 
 export async function certGet() {
 	let d = '';
+
+	let p = createParamEndPoint('/device/cert');
+
 	try {
-		let response = await fetch('/device/cert');
+		let response = await fetch(p.endpoint, { headers: p.headers });
 		let data = await response.json();
 		console.log(data);
 
@@ -60,13 +63,13 @@ export async function certGet() {
  * @param {string} cert
  */
 export async function certSave(cert) {
+	let p = createParamEndPoint('/device/cert');
+
 	if (cert) {
 		try {
-			let response = await fetch('/device/cert', {
+			let response = await fetch(p.endpoint, {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
+				headers: p.headers,
 				body: JSON.stringify({ cfp: cert })
 			});
 			let data = await response.json();
@@ -150,11 +153,9 @@ export function createParamEndPoint(path) {
 	let data = {};
 	const ldb_user = new SessionDB('data_user');
 	data.headers = {
-		headers: {
-			'Content-Type': 'application/json',
-			// @ts-ignore
-			token: ldb_user.data.token
-		}
+		'Content-Type': 'application/json',
+		// @ts-ignore
+		token: ldb_user.data.token
 	};
 	data.endpoint = createURL('http', ldb_user.data.host, path);
 	return data;

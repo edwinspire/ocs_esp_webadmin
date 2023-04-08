@@ -20,7 +20,7 @@
 
 	export const getInfo = async () => {
 		try {
-			let response = await fetch(data_endpoint.endpoint);
+			let response = await fetch(data_endpoint.endpoint, {headers: data_endpoint.headers});
 			let data = await response.json();
 
 			if (response.status == 200 && data) {
@@ -86,7 +86,7 @@
 
 	onMount(async () => {
 		try {
-			data_endpoint = createParamEndPoint('/device/inputs');
+			data_endpoint = createParamEndPoint('/device/outputs');
 			await getInfo();
 		} catch (error) {
 			console.log(error);
