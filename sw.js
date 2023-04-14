@@ -1,64 +1,42 @@
-// Caché de la aplicación
-const CACHE_NAME = 'mi-app-cache';
+// This is the service worker with the combined offline experience (Offline page + Offline copy of pages)
 
-// Archivos a cachear
-const urlsToCache = [
-  '/',
-  '/css/style.css',
-  '/js/main.js',
-  '/img/logo.png'
-];
+const CACHE = "pwabuilder-offline-page";
 
-// Instalación del Service Worker
-self.addEventListener('install', function(event) {
-  // Realizamos la instalación del caché
+// TODO: replace the following with the correct offline fallback page i.e.: const offlineFallbackPage = "offline.html";
+const offlineFallbackPage = "ToDo-replace-this-name.html";
+
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+self.addEventListener('install', async (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(function(cache) {
-        console.log('Caché abierto');
-        // Agregamos los archivos a cachear
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE)
+      .then((cache) => cache.add(offlineFallbackPage))
   );
 });
 
-// Activación del Service Worker
-/*
-self.addEventListener('activate', function(event) {
-  console.log('Service Worker activado');
-});
-*/
 
-// Interceptamos la petición y retornamos el archivo desde caché
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request)
-      .then(function(response) {
-        // Si lo encontramos en caché, lo retornamos
-        if (response) {
-          console.log('Archivo recuperado desde caché');
-          return response;
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith((async () => {
+      try {
+        const preloadResp = await event.preloadResponse;
+
+        if (preloadResp) {
+          return preloadResp;
         }
-        // Si no está en caché, lo pedimos al servidor
-        return fetch(event.request);
-      })
-  );
-});
 
-// Eliminamos cachés antiguos
-self.addEventListener('activate', function(event) {
+        const networkResp = await fetch(event.request);
+        return networkResp;
+      } catch (error) {
 
-  const cacheWhitelist = ['mi-app-cache'];
-
-  event.waitUntil(
-    caches.keys().then(function(cacheNames) {
-      return Promise.all(
-        cacheNames.map(function(cacheName) {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    })
-  );
+        const cache = await caches.open(CACHE);
+        const cachedResp = await cache.match(offlineFallbackPage);
+        return cachedResp;
+      }
+    })());
+  }
 });
