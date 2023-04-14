@@ -1,45 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-
 		<title>Open Community Safety</title>
-		<meta name="description" content="Open Community Safety">
-		<meta name="theme-color" content="#ffffff">
+		<meta name="description" content="Open Community Safety" />
+		<meta name="theme-color" content="#ffffff" />
 
 		<meta charset="utf-8" />
 		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
 		<link rel="icon" href="/ocs_esp_webadmin/favicon.png" />
 		<meta name="viewport" content="width=device-width" />
 		<meta http-equiv="content-security-policy" content="">
-		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/entry/start.d086aceb.js">
+		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/entry/start.a41f73f6.js">
 		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/chunks/index.9265c3c6.js">
-		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/chunks/singletons.1ab9a9b5.js">
+		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/chunks/singletons.1d17d5ef.js">
 		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/chunks/index.8d825a6c.js">
-		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/entry/app.a8573dc1.js">
+		<link rel="modulepreload" href="/ocs_esp_webadmin/_app/immutable/entry/app.b294f103.js">
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents;">
 			<script>
 				{
-					__sveltekit_m3mx6f = {
+					__sveltekit_xv4cl1 = {
 						env: {},
 						assets: "/ocs_esp_webadmin",
 						element: document.currentScript.parentElement
 					};
 
 					Promise.all([
-						import("/ocs_esp_webadmin/_app/immutable/entry/start.d086aceb.js"),
-						import("/ocs_esp_webadmin/_app/immutable/entry/app.a8573dc1.js")
+						import("/ocs_esp_webadmin/_app/immutable/entry/start.a41f73f6.js"),
+						import("/ocs_esp_webadmin/_app/immutable/entry/app.b294f103.js")
 					]).then(([kit, app]) => {
-						kit.start(app, __sveltekit_m3mx6f.element);
+						kit.start(app, __sveltekit_xv4cl1.element);
 					});
 				}
 			</script>
 		</div>
 
 		<script>
-			
-		  </script>
-
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', function () {
+					navigator.serviceWorker
+						.register('sw.js')
+						.then(function (registration) {
+							// Registration was successful
+							console.log('ServiceWorker registration successful with scope: ', registration.scope);
+						})
+						.catch(function (err) {
+							// registration failed :(
+							console.log('ServiceWorker registration failed: ', err);
+						});
+				});
+			}
+		</script>
 	</body>
 </html>
