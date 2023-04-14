@@ -23,9 +23,11 @@ self.addEventListener('install', function(event) {
 });
 
 // Activación del Service Worker
+/*
 self.addEventListener('activate', function(event) {
   console.log('Service Worker activado');
 });
+*/
 
 // Interceptamos la petición y retornamos el archivo desde caché
 self.addEventListener('fetch', function(event) {
